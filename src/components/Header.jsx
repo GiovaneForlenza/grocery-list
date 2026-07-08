@@ -2,7 +2,7 @@ import { Plus, Tags } from "lucide-react";
 
 export default function Header({ onNovoItem }) {
   return (
-    <header className="border-sage bg-paper/90 supports-[backdrop-filter]:bg-paper/75 sticky top-0 z-30 border-b backdrop-blur">
+    <header className="border-sage bg-paper/90 supports-backdrop-filter:bg-paper/75 sticky top-0 z-30 border-b backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-4 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <span className="bg-forest text-marigold-soft flex h-9 w-9 shrink-0 items-center justify-center rounded-full">

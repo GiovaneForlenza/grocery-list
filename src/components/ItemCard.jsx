@@ -16,31 +16,29 @@ export default function ItemCard({
   const precisaComprar = !!item.comprar;
 
   return (
-    <article className="group border-sage relative flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition hover:shadow-md">
-      {/* <span className="tag-eyelet-ring" aria-hidden="true" /> */}
-
-      <div className="flex aspect-4/3 h-60 w-full flex-col items-center justify-between overflow-hidden border bg-white p-4">
+    <article className="group border-sage relative flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition hover:shadow-md">
+      <div className="flex h-60 flex-col flex-nowrap items-center justify-start gap-2 overflow-hidden bg-white p-2">
         {item.foto_url && !imagemComError ? (
-          <img
-            src={item.foto_url}
-            alt={item.nome}
-            loading="lazy"
-            onError={() => setImagemComError(true)}
-            className="f-full w-full border transition duration-300"
-          />
+          <div
+            style={{ backgroundImage: `url(${item.foto_url})` }}
+            className={`h-full w-full bg-contain bg-center bg-no-repeat`}
+          ></div>
         ) : (
+          // <div
+          // >
+          //   a
+          // </div>
           <div className="text-ink-faint flex h-full w-full flex-col items-center justify-center gap-1.5">
             <ImageOff size={48} strokeWidth={1.5} />
             <span className="text-[11px]">Sem photo</span>
           </div>
         )}
-        <div className="top-2 flex w-full flex-wrap gap-1 border px-2">
+        <div className="top-2 flex w-full flex-wrap gap-1 px-2">
           {item.categoria && (
             <span className="bg-paper border-forest/30 text-forest-dark top-2 left-2 rounded-md border px-2 py-1 font-mono text-[10px] font-semibold tracking-widest uppercase">
               {item.categoria}
             </span>
           )}
-
           {precisaComprar && (
             <span className="bg-brick top-3 right-3 rounded-md px-2 py-1 text-[10px] font-semibold tracking-widest text-white uppercase shadow-sm">
               Comprar
