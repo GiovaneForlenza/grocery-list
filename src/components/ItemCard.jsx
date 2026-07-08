@@ -16,7 +16,7 @@ export default function ItemCard({
   const precisaComprar = !!item.comprar;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-sage bg-white shadow-sm transition  hover:shadow-md">
+    <article className="group relative flex flex-col overflow-hidden rounded-lg border border-sage bg-white shadow-sm transition  hover:shadow-md">
       {/* <span className="tag-eyelet-ring" aria-hidden="true" /> */}
 
       <div className="aspect-4/3 w-full h-60  overflow-hidden bg-white flex items-center p-4 justify-center">
