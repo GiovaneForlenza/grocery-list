@@ -1,16 +1,46 @@
-# React + Vite
+# Mercado — Controle de Estoque
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+App React (Vite) + Tailwind CSS v4 conectado ao Supabase para gerenciar itens de mercado: grid de produtos com foto, categoria, preço e quantidade (com botões +/- que atualizam o banco em tempo real), filtro por categoria, ordenação por nome/quantidade e um modal para cadastrar novos itens e categorias.
 
-Currently, two official plugins are available:
+## Rodando o projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+O `.env` já está configurado com a URL e a chave publicável do Supabase informadas. Se precisar trocar, edite `.env` (variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_KEY`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Banco de dados
 
-## Expanding the ESLint configuration
+Veja `supabase.sql` para o SQL de referência. **Importante:** o schema original de `itens` não tinha coluna de preço, mas a Home exibe preço por item — o script inclui o `alter table itens add column preco numeric(10,2)`. Rode esse SQL no editor SQL do Supabase antes de usar o app.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Também inclui políticas de RLS (Row Level Security) básicas liberando leitura/escrita pública, compatíveis com o uso da chave `publishable` no front-end. Ajuste conforme a necessidade de autenticação do seu projeto.
+
+## Estrutura
+
+```
+src/
+  lib/supabaseClient.js     cliente Supabase
+  hooks/useItems.js         busca itens + atualização otimista de quantidade
+  hooks/useCategories.js    busca e cria categorias
+  components/
+    Header.jsx              topo com título e botão "Novo item"
+    CategoryFilter.jsx       pílulas de filtro por categoria
+    SortDropdown.jsx        dropdown estilizado (nome / quantidade)
+    ItemGrid.jsx / ItemCard.jsx  grid responsivo e card no estilo "etiqueta"
+    QuantityStepper.jsx     botões +/- que gravam no Supabase
+    AddItemModal.jsx        modal com abas "Novo item" / "Nova categoria"
+    Toast.jsx               feedback de sucesso/erro
+```
+
+## Responsividade
+
+Grid adapta de 2 colunas (mobile) até 5 colunas (desktop grande), com filtros roláveis horizontalmente em telas estreitas.
+
+## Build
+
+```bash
+npm run build
+npm run preview
+```

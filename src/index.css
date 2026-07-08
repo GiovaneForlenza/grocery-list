@@ -1,1 +1,127 @@
 @import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-paper: #faf9f4;
+  --color-paper-dim: #f1efe4;
+  --color-paper-deep: #e9e6d6;
+  --color-ink: #23271f;
+  --color-ink-soft: #565c4d;
+  --color-ink-faint: #8b9080;
+  --color-forest: #2f4a3d;
+  --color-forest-dark: #1e3128;
+  --color-forest-light: #3f6350;
+  --color-marigold: #e2a53a;
+  --color-marigold-dark: #b9852a;
+  --color-marigold-soft: #f6e3bd;
+  --color-sage: #d9decb;
+  --color-sage-dark: #aab596;
+  --color-brick: #b6503f;
+  --color-brick-dark: #963f31;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Signature element: hang-tag eyelet cut into the card, plus a dashed
+   perforation line that reads as a tear-off receipt edge. */
+.tag-card {
+  --eyelet-x: 22px;
+  --eyelet-y: 20px;
+  --eyelet-r: 5px;
+  mask-image: radial-gradient(
+    circle var(--eyelet-r) at var(--eyelet-x) var(--eyelet-y),
+    transparent 99%,
+    black 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle var(--eyelet-r) at var(--eyelet-x) var(--eyelet-y),
+    transparent 99%,
+    black 100%
+  );
+}
+
+.tag-eyelet-ring {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-sage-dark);
+  pointer-events: none;
+}
+
+.perforation {
+  border-top: 1.5px dashed var(--color-sage-dark);
+}
+
+.campo-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-sage-dark);
+  background-color: var(--color-paper);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.campo-input::placeholder {
+  color: var(--color-ink-faint);
+}
+.campo-input:focus {
+  border-color: var(--color-forest);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-forest) 18%, transparent);
+}
+
+/* Custom scrollbar for the category rail */
+.scroll-rail::-webkit-scrollbar {
+  height: 6px;
+}
+.scroll-rail::-webkit-scrollbar-thumb {
+  background-color: var(--color-sage-dark);
+  border-radius: 9999px;
+}
+.scroll-rail::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-pop-in {
+  animation: pop-in 0.16s ease-out;
+}
+
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-toast-in {
+  animation: toast-in 0.2s ease-out;
+}

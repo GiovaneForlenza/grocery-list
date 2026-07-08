@@ -1,40 +1,147 @@
-import supabase from "./supabase-client";
+import { useMemo, useState } from "react";
+import { Loader2, TriangleAlert } from "lucide-react";
+import Header from "./components/Header";
+import CategoryFilter from "./components/CategoryFilter";
+import SortDropdown from "./components/SortDropdown";
+import ItemGrid from "./components/ItemGrid";
+import AddItemModal from "./components/AddItemModal";
+import Toast from "./components/Toast";
+import { useItems } from "./hooks/useItems";
+import { useCategories } from "./hooks/useCategories";
 
-function App() {
-  const item = "Teste";
+export default function App() {
+  const {
+    itens,
+    loading: carregandoItens,
+    error: erroItens,
+    addItem,
+    updateQuantidade,
+    updateComprar,
+  } = useItems();
+  const {
+    categorias,
+    loading: carregandoCategorias,
+    error: erroCategorias,
+    addCategoria,
+  } = useCategories();
 
-  const handleAdd = async () => {
-    const { data, error } = await supabase
-      .from("Categories")
-      .insert({ name: item });
+  const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
+  const [ordenacao, setOrdenacao] = useState("nome-asc");
+  const [modalAberto, setModalAberto] = useState(false);
+  const [toast, setToast] = useState(null);
 
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
+  function mostrarToast(mensagem, tipo = "sucesso") {
+    setToast({ mensagem, tipo });
+    setTimeout(() => setToast(null), 2600);
+  }
+
+  const itensFiltrados = useMemo(() => {
+    let lista = itens;
+    if (categoriaAtiva === "Precisa comprar") {
+      lista = lista.filter((item) => item.comprar);
+    } else if (categoriaAtiva !== "Todos") {
+      lista = lista.filter((item) => item.categoria === categoriaAtiva);
     }
-  };
 
-  const hangleGet = async () => {
-    const { data, error } = await supabase.from("Categories").select();
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
+    const ordenada = [...lista];
+    switch (ordenacao) {
+      case "quantidade-desc":
+        ordenada.sort((a, b) => b.quantidade - a.quantidade);
+        break;
+      case "quantidade-asc":
+        ordenada.sort((a, b) => a.quantidade - b.quantidade);
+        break;
+      case "nome-asc":
+      default:
+        ordenada.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
     }
-  };
+    return ordenada;
+  }, [itens, categoriaAtiva, ordenacao]);
+
+  async function handleAlterarQuantidade(id, novoValor) {
+    try {
+      await updateQuantidade(id, novoValor);
+    } catch (err) {
+      mostrarToast(
+        err.message || "Não foi possível atualizar a quantidade.",
+        "erro",
+      );
+    }
+  }
+
+  async function handleAlterarComprar(id, novoValor) {
+    try {
+      await updateComprar(id, novoValor);
+    } catch (err) {
+      mostrarToast(err.message || "Não foi possível atualizar o item.", "erro");
+    }
+  }
+
+  async function handleAddItem(novoItem) {
+    await addItem(novoItem);
+    mostrarToast(`"${novoItem.nome}" adicionado ao estoque.`);
+  }
+
+  async function handleAddCategoria(nome) {
+    const categoria = await addCategoria(nome);
+    mostrarToast(`Categoria "${categoria.nome}" criada.`);
+    return categoria;
+  }
+
+  const carregando = carregandoItens || carregandoCategorias;
+  const erro = erroItens || erroCategorias;
 
   return (
-    <div className="border">
-      <h1>Grocery list</h1>
-      <button onClick={handleAdd} className="rounded-sm border px-4 py-2">
-        Add item
-      </button>
-      <button onClick={hangleGet} className="rounded-sm border px-4 py-2">
-        Get items
-      </button>
+    <div className="min-h-screen bg-paper">
+      <Header onNovoItem={() => setModalAberto(true)} />
+      <Toast toast={toast} />
+
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CategoryFilter
+            categorias={categorias}
+            categoriaAtiva={categoriaAtiva}
+            onSelecionar={setCategoriaAtiva}
+          />
+          <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
+        </div>
+
+        {erro && (
+          <div className="mb-5 flex items-start gap-2 rounded-xl border border-brick/30 bg-brick/10 px-4 py-3 text-sm text-brick-dark">
+            <TriangleAlert
+              size={17}
+              className="mt-0.5 shrink-0"
+              strokeWidth={2}
+            />
+            <span>
+              Erro ao conectar com o Supabase: {erro}. Verifique as variáveis de
+              ambiente e se as tabelas <code className="font-mono">itens</code>{" "}
+              e <code className="font-mono">categorias</code> existem.
+            </span>
+          </div>
+        )}
+
+        {carregando ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-24 text-ink-faint">
+            <Loader2 size={26} className="animate-spin" strokeWidth={2} />
+            <p className="text-sm">Carregando itens…</p>
+          </div>
+        ) : (
+          <ItemGrid
+            itens={itensFiltrados}
+            onAlterarQuantidade={handleAlterarQuantidade}
+            onAlterarComprar={handleAlterarComprar}
+          />
+        )}
+      </main>
+
+      <AddItemModal
+        aberto={modalAberto}
+        categorias={categorias}
+        onFechar={() => setModalAberto(false)}
+        onAddItem={handleAddItem}
+        onAddCategoria={handleAddCategoria}
+      />
     </div>
   );
 }
-
-export default App;
