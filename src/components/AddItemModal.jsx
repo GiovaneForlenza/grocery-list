@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { Loader2, Package, Tag, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const ITEM_VAZIO = {
   nome: "",
@@ -86,20 +86,20 @@ export default function AddItemModal({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex  justify-center bg-ink/40 backdrop-blur-sm items-center px-2"
+      className="bg-ink/40 fixed inset-0 z-40 flex items-center justify-center px-2 backdrop-blur-sm"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onFechar();
       }}
     >
-      <div className="animate-pop-in flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-sage bg-white shadow-xl sm:rounded-3xl">
-        <div className="flex items-center justify-between border-b border-sage px-5 pt-5">
-          <div className="flex gap-1 flex-col sm:flex-row w-full">
+      <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border bg-white shadow-xl sm:rounded-3xl">
+        <div className="border-sage flex items-center justify-between border-b px-5 pt-5">
+          <div className="flex w-full flex-col gap-1 sm:flex-row">
             <button
               type="button"
               onClick={() => setAba("item")}
-              className={`flex items-center gap-1.5 sm:rounded-t-xl rounded-md px-3.5 py-2.5 text-sm font-medium transition ${
+              className={`flex items-center gap-1.5 rounded-md px-3.5 py-2.5 text-sm font-medium transition sm:rounded-t-xl ${
                 aba === "item"
-                  ? "border  border-sage bg-white text-forest-dark border-b sm:border-b-0"
+                  ? "border-sage text-forest-dark border border-b bg-white sm:border-b-0"
                   : "text-ink-faint hover:text-ink-soft"
               }`}
             >
@@ -111,7 +111,7 @@ export default function AddItemModal({
               onClick={() => setAba("categoria")}
               className={`flex items-center gap-1.5 rounded-t-xl px-3.5 py-2.5 text-sm font-medium transition ${
                 aba === "categoria"
-                  ? "border  border-sage bg-white text-forest-dark border-b sm:border-b-0"
+                  ? "border-sage text-forest-dark border border-b bg-white sm:border-b-0"
                   : "text-ink-faint hover:text-ink-soft"
               }`}
             >
@@ -124,15 +124,15 @@ export default function AddItemModal({
             type="button"
             onClick={onFechar}
             aria-label="Fechar"
-            className="-mt-1 flex h-8 w-16 shrink-0 items-center justify-center rounded-full text-ink-faint transition hover:bg-paper-dim hover:text-ink"
+            className="text-ink-faint hover:bg-paper-dim hover:text-ink -mt-1 flex h-8 w-16 shrink-0 items-center justify-center rounded-full transition"
           >
             <X size={18} strokeWidth={2} />
           </button>
         </div>
 
-        <div className="overflow-y-auto px-3 sm:px-5 pb-5 pt-4">
+        <div className="overflow-y-auto px-3 pt-4 pb-5 sm:px-5">
           {error && (
-            <p className="mb-3 rounded-lg border border-brick/30 bg-brick/10 px-3 py-2 text-sm text-brick-dark">
+            <p className="border-brick/30 bg-brick/10 text-brick-dark mb-3 rounded-lg border px-3 py-2 text-sm">
               {error}
             </p>
           )}
@@ -154,12 +154,12 @@ export default function AddItemModal({
 
               <Campo label="Categoria">
                 {categorias.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-sage-dark/60 bg-paper-dim px-3 py-2.5 text-sm text-ink-faint">
+                  <p className="border-sage-dark/60 bg-paper-dim text-ink-faint rounded-lg border border-dashed px-3 py-2.5 text-sm">
                     Nenhuma categoria cadastrada.{" "}
                     <button
                       type="button"
                       onClick={() => setAba("categoria")}
-                      className="font-medium text-forest underline underline-offset-2"
+                      className="text-forest font-medium underline underline-offset-2"
                     >
                       Criar uma agora
                     </button>
@@ -184,7 +184,7 @@ export default function AddItemModal({
                 )}
               </Campo>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Campo label="Quantidade">
                   <input
                     type="number"
@@ -250,7 +250,7 @@ export default function AddItemModal({
 function Campo({ label, children }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-xs font-medium uppercase tracking-wide text-ink-faint">
+      <span className="text-ink-faint text-xs font-medium tracking-wide uppercase">
         {label}
       </span>
       {children}
@@ -263,7 +263,7 @@ function BotaoSalvar({ enviando, texto }) {
     <button
       type="submit"
       disabled={enviando}
-      className="mt-1 flex items-center justify-center gap-2 rounded-full bg-forest px-4 py-2.5 text-sm font-medium text-paper transition hover:bg-forest-dark disabled:cursor-not-allowed disabled:opacity-70"
+      className="bg-forest text-paper hover:bg-forest-dark mt-1 flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-70"
     >
       {enviando && (
         <Loader2 size={15} className="animate-spin" strokeWidth={2.5} />

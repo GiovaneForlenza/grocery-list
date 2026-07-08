@@ -6,7 +6,7 @@ export default function CategoryFilter({
   const opcoes = ["Todos", "Precisa comprar", ...categorias.map((c) => c.nome)];
 
   return (
-    <div className="scroll-rail -mx-1 flex flex-wrap  gap-2 overflow-x-auto px-1 pb-1">
+    <div className="scroll-rail -mx-1 flex flex-wrap gap-2 overflow-x-auto px-1 pb-1">
       {opcoes.map((nome) => {
         const ativo = nome === categoriaAtiva;
         const especial = nome === "Precisa comprar";
@@ -21,8 +21,8 @@ export default function CategoryFilter({
                   ? "border-brick bg-brick text-white shadow-sm"
                   : "border-forest bg-forest text-paper shadow-sm"
                 : especial
-                  ? "border-brick/40 bg-white text-brick-dark hover:border-brick hover:bg-brick/5"
-                  : "border-sage-dark/60 bg-white text-ink-soft hover:border-forest-light hover:text-forest"
+                  ? "border-brick/40 text-brick-dark hover:border-brick hover:bg-brick/5 bg-white"
+                  : "border-sage-dark/60 text-ink-soft hover:border-forest-light hover:text-forest bg-white"
             }`}
           >
             {nome}

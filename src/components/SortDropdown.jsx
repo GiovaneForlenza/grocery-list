@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
 import {
   ArrowDownAZ,
   ArrowDownWideNarrow,
   Check,
   ChevronDown,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const OPCOES = [
   { valor: "nome-asc", rotulo: "Nome (A → Z)", icon: ArrowDownAZ },
@@ -36,13 +36,13 @@ export default function SortDropdown({ valor, onChange }) {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative shrink-0 ">
+    <div ref={containerRef} className="relative shrink-0">
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={aberto}
-        className="flex items-center w-full sm:w-fit gap-2 rounded-full border border-sage-dark/60 bg-white px-4 py-2 text-sm font-medium text-ink-soft shadow-sm transition hover:border-forest-light hover:text-forest"
+        className="border-sage-dark/60 text-ink-soft hover:border-forest-light hover:text-forest flex w-full items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-medium shadow-sm transition sm:w-fit"
       >
         <atual.icon size={15} strokeWidth={2} />
         <span className="hidden md:inline">Ordenar:</span>
@@ -57,7 +57,7 @@ export default function SortDropdown({ valor, onChange }) {
       {aberto && (
         <ul
           role="listbox"
-          className="animate-pop-in absolute right-0 z-20 mt-2 w-64 origin-top-right overflow-hidden rounded-2xl border border-sage bg-white py-1.5 shadow-lg"
+          className="animate-pop-in border-sage absolute right-0 z-20 mt-2 w-64 origin-top-right overflow-hidden rounded-2xl border bg-white py-1.5 shadow-lg"
         >
           {OPCOES.map((opcao) => {
             const selecionado = opcao.valor === valor;
