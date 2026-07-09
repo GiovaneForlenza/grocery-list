@@ -30,7 +30,7 @@ export default function ItemCard({
           ) : (
             <div className="text-ink-faint flex h-full w-full flex-col items-center justify-center gap-1.5">
               <ImageOff size={48} strokeWidth={1.5} />
-              <span className="text-[11px]">Sem foto</span>
+              <span className="text-[11px]">Sem photo</span>
             </div>
           )}
 
@@ -44,30 +44,28 @@ export default function ItemCard({
             <Pencil size={14} strokeWidth={2} />
           </button>
         </div>
+        <div className="top-2 flex w-full flex-wrap gap-1 px-2">
+          {item.categoria && (
+            <span className="bg-paper border-forest/30 text-forest-dark rounded-sm border px-2 py-1 font-mono text-[10px] font-semibold tracking-widest uppercase">
+              {item.categoria}
+            </span>
+          )}
+          {precisaComprar && (
+            <span className="bg-brick rounded-sm px-2 py-1 text-[10px] font-semibold tracking-widest text-white uppercase shadow-sm">
+              Comprar
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="perforation flex flex-1 flex-col justify-between gap-3 px-2 pt-3 pb-4">
-        <div className="flex flex-col gap-2">
-          <div className="top-2 flex w-full flex-wrap gap-1">
-            {item.categoria && (
-              <span className="bg-paper border-forest/30 text-forest-dark top-2 left-2 rounded-md border px-2 py-1 font-mono text-[10px] font-semibold tracking-widest uppercase">
-                {item.categoria}
-              </span>
-            )}
-            {precisaComprar && (
-              <span className="bg-brick top-3 right-3 rounded-md px-2 py-1 text-[10px] font-semibold tracking-widest text-white uppercase shadow-sm">
-                Comprar
-              </span>
-            )}
-          </div>
-          <div className="">
-            <h3 className="font-display text-ink line-clamp-2 text-base leading-snug font-semibold">
-              {item.nome}
-            </h3>
-            <p className="text-marigold-dark mt-1 font-mono text-lg font-semibold">
-              R${item.preco}
-            </p>
-          </div>
+      <div className="perforation flex flex-1 flex-col justify-start gap-3 px-4 pt-3 pb-4">
+        <div className="">
+          <h3 className="font-display text-ink line-clamp-2 text-base leading-snug font-semibold">
+            {item.nome}
+          </h3>
+          <p className="text-marigold-dark mt-1 font-mono text-lg font-semibold">
+            {formatarPreco(item.preco)}
+          </p>
         </div>
         <div className="flex flex-col items-center gap-2">
           <div className="flex h-full w-full flex-col items-center gap-2 sm:flex-row">
@@ -77,7 +75,7 @@ export default function ItemCard({
             />
 
             <label
-              className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-md border px-2 py-2 text-[11px] font-medium transition select-none sm:h-full sm:w-fit ${
+              className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-sm border px-2 py-2 text-[11px] font-medium transition select-none sm:h-full sm:w-fit ${
                 precisaComprar
                   ? "border-brick/40 bg-brick/10 text-brick-dark"
                   : "border-sage text-ink-faint hover:border-brick/40 hover:text-brick-dark"
@@ -96,7 +94,7 @@ export default function ItemCard({
           {precisaComprar && (
             <div className="w-full">
               <label
-                className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-md border px-2 py-2 text-[11px] font-medium transition select-none ${
+                className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-sm border px-2 py-2 text-[11px] font-medium transition select-none ${
                   comprando
                     ? "border-forest-dark/40 bg-forest/10 text-forest-dark"
                     : "border-sage text-ink-faint hover:border-forest/40 hover:text-forest-dark"

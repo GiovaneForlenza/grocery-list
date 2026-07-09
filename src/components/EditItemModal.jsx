@@ -1,5 +1,6 @@
-import { Loader2, Pencil, X } from "lucide-react";
+import { Loader2, Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import ConfirmDialog from "./ConfirmDialog";
 
 const ESTADO_VAZIO = { nome: "", categoria: "", quantidade: "0", preco: "" };
 
@@ -9,10 +10,13 @@ export default function EditItemModal({
   categorias,
   onFechar,
   onSalvar,
+  onDeletar,
 }) {
   const [form, setForm] = useState(ESTADO_VAZIO);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState(null);
+  const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
   const primeiroCampoRef = useRef(null);
 
   useEffect(() => {
@@ -22,20 +26,20 @@ export default function EditItemModal({
         categoria: item.categoria ?? "",
         quantidade: String(item.quantidade ?? 0),
         preco: String(item.preco ?? ""),
-        foto_url: item.foto_url ?? "",
       });
       setError(null);
+      setConfirmandoExclusao(false);
       setTimeout(() => primeiroCampoRef.current?.focus(), 50);
     }
   }, [aberto, item]);
 
   useEffect(() => {
     function aoTeclar(e) {
-      if (e.key === "Escape") onFechar();
+      if (e.key === "Escape" && !confirmandoExclusao) onFechar();
     }
     if (aberto) document.addEventListener("keydown", aoTeclar);
     return () => document.removeEventListener("keydown", aoTeclar);
-  }, [aberto, onFechar]);
+  }, [aberto, confirmandoExclusao, onFechar]);
 
   if (!aberto || !item) return null;
 
@@ -53,13 +57,26 @@ export default function EditItemModal({
         categoria: form.categoria,
         quantidade: Number(form.quantidade) || 0,
         preco: Number(form.preco) || 0,
-        foto_url: form.foto_url,
       });
       onFechar();
     } catch (err) {
       setError(err.message || "Não foi possível salvar as alterações.");
     } finally {
       setEnviando(false);
+    }
+  }
+
+  async function handleConfirmarExclusao() {
+    setExcluindo(true);
+    try {
+      await onDeletar(item.id);
+      setConfirmandoExclusao(false);
+      onFechar();
+    } catch (err) {
+      setConfirmandoExclusao(false);
+      setError(err.message || "Não foi possível excluir o item.");
+    } finally {
+      setExcluindo(false);
     }
   }
 
@@ -70,7 +87,7 @@ export default function EditItemModal({
         if (e.target === e.currentTarget) onFechar();
       }}
     >
-      <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border bg-white shadow-xl sm:rounded-3xl">
+      <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-md border bg-white shadow-xl sm:rounded-3xl">
         <div className="border-sage flex items-center justify-between border-b px-5 py-4">
           <div className="text-forest-dark flex items-center gap-2 text-sm font-medium">
             <Pencil size={15} strokeWidth={2} />
@@ -139,11 +156,11 @@ export default function EditItemModal({
                   className="campo-input font-mono"
                 />
               </Campo>
-              <Campo label="Valor">
+              <Campo label="Valor (R$)">
                 <input
                   type="number"
                   min="0"
-                  step="1"
+                  step="0.01"
                   value={form.preco}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, preco: e.target.value }))
@@ -153,17 +170,6 @@ export default function EditItemModal({
                 />
               </Campo>
             </div>
-            <Campo label="Imagem URL">
-              <input
-                type="text"
-                value={form.foto_url}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, foto_url: e.target.value }))
-                }
-                placeholder="Imagem URL"
-                className="campo-input w-full! font-mono"
-              />
-            </Campo>
 
             <button
               type="submit"
@@ -175,9 +181,30 @@ export default function EditItemModal({
               )}
               Salvar alterações
             </button>
+
+            <button
+              type="button"
+              onClick={() => setConfirmandoExclusao(true)}
+              className="text-brick hover:bg-brick/10 flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium transition"
+            >
+              <Trash2 size={15} strokeWidth={2} />
+              Deletar produto
+            </button>
           </form>
         </div>
       </div>
+
+      <ConfirmDialog
+        aberto={confirmandoExclusao}
+        titulo="Excluir produto?"
+        mensagem={`Isso vai remover "${item.nome}" do estoque permanentemente. Essa ação não pode ser desfeita.`}
+        textoConfirmar="Excluir"
+        textoCancelar="Cancelar"
+        carregando={excluindo}
+        perigoso
+        onConfirmar={handleConfirmarExclusao}
+        onCancelar={() => setConfirmandoExclusao(false)}
+      />
     </div>
   );
 }

@@ -21,7 +21,7 @@ export default function Header({ onNovoItem }) {
         <button
           type="button"
           onClick={onNovoItem}
-          className="group bg-forest text-paper hover:bg-forest-dark inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-sm transition active:scale-[0.98] sm:w-fit sm:px-5"
+          className="group bg-forest text-paper hover:bg-forest-dark inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium shadow-sm transition active:scale-[0.98] sm:w-fit sm:px-5"
         >
           <Plus size={17} strokeWidth={2.5} />
           <span className="">Novo item</span>

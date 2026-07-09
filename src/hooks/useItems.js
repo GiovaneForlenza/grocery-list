@@ -188,12 +188,37 @@ export function useItems() {
     return data;
   }, []);
 
+  // Remove o item do banco. Otimista: some da UI na hora e volta
+  // pro lugar (na posição original) se a exclusão falhar.
+  const deleteItem = useCallback(async (id) => {
+    let itemRemovido;
+    let indiceOriginal;
+    setItens((prev) => {
+      indiceOriginal = prev.findIndex((item) => item.id === id);
+      itemRemovido = prev[indiceOriginal];
+      return prev.filter((item) => item.id !== id);
+    });
+
+    const { error } = await supabase.from("itens").delete().eq("id", id);
+
+    if (error) {
+      setItens((prev) => {
+        if (!itemRemovido) return prev;
+        const copia = [...prev];
+        copia.splice(indiceOriginal, 0, itemRemovido);
+        return copia;
+      });
+      throw new Error(error.message);
+    }
+  }, []);
+
   return {
     itens,
     loading,
     error,
     addItem,
     updateItem,
+    deleteItem,
     updateQuantidade,
     updatePrecisaComprar,
     updateComprando,

@@ -16,13 +16,13 @@ export default function QuantityStepper({ quantidade, onAlterar }) {
   }
 
   return (
-    <div className="border-sage bg-paper-dim/70 flex w-full items-center justify-between rounded-lg border px-1.5 py-1.5">
+    <div className="border-sage bg-paper-dim/70 flex w-full items-center justify-between rounded-sm border px-1.5 py-1.5">
       <button
         type="button"
         aria-label="Diminuir quantidade"
         onClick={() => alterar(-1)}
         disabled={quantidade <= 0 || ocupado}
-        className="text-brick hover:bg-brick/10 disabled:text-ink-faint flex h-7 w-7 items-center justify-center rounded-lg transition disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        className="text-brick hover:bg-brick/10 disabled:text-ink-faint flex h-7 w-7 items-center justify-center rounded-sm transition disabled:cursor-not-allowed disabled:hover:bg-transparent"
       >
         <Minus size={15} strokeWidth={2.5} />
       </button>
@@ -36,7 +36,7 @@ export default function QuantityStepper({ quantidade, onAlterar }) {
         aria-label="Aumentar quantidade"
         onClick={() => alterar(1)}
         disabled={ocupado}
-        className="text-forest hover:bg-forest/10 flex h-7 w-7 items-center justify-center rounded-lg transition disabled:cursor-not-allowed"
+        className="text-forest hover:bg-forest/10 flex h-7 w-7 items-center justify-center rounded-md transition disabled:cursor-not-allowed"
       >
         <Plus size={15} strokeWidth={2.5} />
       </button>

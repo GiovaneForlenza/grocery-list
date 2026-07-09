@@ -44,7 +44,7 @@ export default function SortDropdown({ valor, onChange }) {
         onClick={() => setAberto((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={aberto}
-        className="border-sage-dark/60 text-ink-soft hover:border-forest-light hover:text-forest flex w-full items-center gap-2 rounded-full border bg-white px-4 py-2 text-sm font-medium shadow-sm transition sm:w-fit"
+        className="border-sage-dark/60 text-ink-soft hover:border-forest-light hover:text-forest flex w-full items-center justify-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-medium shadow-sm transition sm:w-fit sm:items-start"
       >
         <atual.icon size={15} strokeWidth={2} />
         <span className="hidden md:inline">Ordenar:</span>

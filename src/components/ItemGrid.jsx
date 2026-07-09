@@ -36,7 +36,8 @@ export default function ItemGrid({
           Nenhum item encontrado
         </p>
         <p className="text-ink-faint max-w-sm text-sm">
-          Ajuste o filtro de categoria ou cadastre um novo item para vê-lo aqui.
+          Ajuste a busca ou o filtro de categoria, ou cadastre um novo item para
+          vê-lo aqui.
         </p>
       </div>
     );
@@ -48,7 +49,7 @@ export default function ItemGrid({
         <button
           type="button"
           onClick={limparListaDeCompra}
-          className="border-forest bg-forest text-paper hover:bg-forest-dark flex w-full items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition sm:w-fit"
+          className="flex w-full items-center justify-center gap-2 rounded-md border border-forest bg-forest px-3 py-2 text-sm font-medium text-paper transition hover:bg-forest-dark sm:w-fit"
         >
           <ShoppingCart size={15} strokeWidth={2} />
           Comprei todos os itens

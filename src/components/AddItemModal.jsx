@@ -91,13 +91,13 @@ export default function AddItemModal({
         if (e.target === e.currentTarget) onFechar();
       }}
     >
-      <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border bg-white shadow-xl sm:rounded-3xl">
+      <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-md border bg-white shadow-xl">
         <div className="border-sage flex items-center justify-between border-b px-5 pt-5">
           <div className="flex w-full flex-col gap-1 sm:flex-row">
             <button
               type="button"
               onClick={() => setAba("item")}
-              className={`flex items-center gap-1.5 rounded-md px-3.5 py-2.5 text-sm font-medium transition sm:rounded-t-xl ${
+              className={`flex items-center gap-1.5 rounded-md px-3.5 py-2.5 text-sm font-medium transition ${
                 aba === "item"
                   ? "border-sage text-forest-dark border border-b bg-white sm:border-b-0"
                   : "text-ink-faint hover:text-ink-soft"
@@ -109,7 +109,7 @@ export default function AddItemModal({
             <button
               type="button"
               onClick={() => setAba("categoria")}
-              className={`flex items-center gap-1.5 rounded-t-xl px-3.5 py-2.5 text-sm font-medium transition ${
+              className={`flex items-center gap-1.5 rounded-t-md px-3.5 py-2.5 text-sm font-medium transition ${
                 aba === "categoria"
                   ? "border-sage text-forest-dark border border-b bg-white sm:border-b-0"
                   : "text-ink-faint hover:text-ink-soft"
@@ -263,7 +263,7 @@ function BotaoSalvar({ enviando, texto }) {
     <button
       type="submit"
       disabled={enviando}
-      className="bg-forest text-paper hover:bg-forest-dark mt-1 flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-70"
+      className="bg-forest text-paper hover:bg-forest-dark mt-1 flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-70"
     >
       {enviando && (
         <Loader2 size={15} className="animate-spin" strokeWidth={2.5} />

@@ -1,14 +1,15 @@
-import { useMemo, useState } from "react";
 import { Loader2, TriangleAlert } from "lucide-react";
-import Header from "./components/Header";
-import CategoryFilter from "./components/CategoryFilter";
-import SortDropdown from "./components/SortDropdown";
-import ItemGrid from "./components/ItemGrid";
+import { useMemo, useState } from "react";
 import AddItemModal from "./components/AddItemModal";
+import CategoryFilter from "./components/CategoryFilter";
 import EditItemModal from "./components/EditItemModal";
+import Header from "./components/Header";
+import ItemGrid from "./components/ItemGrid";
+import SearchBar from "./components/SearchBar";
+import SortDropdown from "./components/SortDropdown";
 import Toast from "./components/Toast";
-import { useItems } from "./hooks/useItems";
 import { useCategories } from "./hooks/useCategories";
+import { useItems } from "./hooks/useItems";
 
 export default function App() {
   const {
@@ -17,6 +18,7 @@ export default function App() {
     error: erroItens,
     addItem,
     updateItem,
+    deleteItem,
     updateQuantidade,
     updatePrecisaComprar,
     updateComprando,
@@ -31,6 +33,7 @@ export default function App() {
 
   const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
   const [ordenacao, setOrdenacao] = useState("nome-asc");
+  const [busca, setBusca] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
   const [itemEmEdicao, setItemEmEdicao] = useState(null);
   const [toast, setToast] = useState(null);
@@ -46,6 +49,11 @@ export default function App() {
       lista = lista.filter((item) => item.precisa_comprar);
     } else if (categoriaAtiva !== "Todos") {
       lista = lista.filter((item) => item.categoria === categoriaAtiva);
+    }
+
+    const termo = busca.trim().toLowerCase();
+    if (termo) {
+      lista = lista.filter((item) => item.nome.toLowerCase().includes(termo));
     }
 
     const ordenada = [...lista];
@@ -69,7 +77,7 @@ export default function App() {
         ordenada.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
     }
     return ordenada;
-  }, [itens, categoriaAtiva, ordenacao]);
+  }, [itens, categoriaAtiva, busca, ordenacao]);
 
   async function handleAlterarQuantidade(id, novoValor) {
     try {
@@ -120,6 +128,12 @@ export default function App() {
     mostrarToast(`"${dadosAtualizados.nome}" atualizado.`);
   }
 
+  async function handleDeletarItem(id) {
+    const item = itens.find((i) => i.id === id);
+    await deleteItem(id);
+    mostrarToast(`"${item?.nome ?? "Item"}" excluído do estoque.`);
+  }
+
   async function handleAddCategoria(nome) {
     const categoria = await addCategoria(nome);
     mostrarToast(`Categoria "${categoria.nome}" criada.`);
@@ -134,7 +148,7 @@ export default function App() {
       <Header onNovoItem={() => setModalAberto(true)} />
       <Toast toast={toast} />
 
-      <main className="mx-auto max-w-7xl px-3 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CategoryFilter
             categorias={categorias}
@@ -143,9 +157,12 @@ export default function App() {
           />
           <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
         </div>
+        <div className="mb-4">
+          <SearchBar valor={busca} onChange={setBusca} />
+        </div>
 
         {erro && (
-          <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-xl border px-4 py-3 text-sm">
+          <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-4 py-3 text-sm">
             <TriangleAlert
               size={17}
               className="mt-0.5 shrink-0"
@@ -191,6 +208,7 @@ export default function App() {
         categorias={categorias}
         onFechar={() => setItemEmEdicao(null)}
         onSalvar={handleSalvarEdicao}
+        onDeletar={handleDeletarItem}
       />
     </div>
   );
