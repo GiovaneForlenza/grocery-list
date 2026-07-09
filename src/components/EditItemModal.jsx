@@ -22,6 +22,7 @@ export default function EditItemModal({
         categoria: item.categoria ?? "",
         quantidade: String(item.quantidade ?? 0),
         preco: String(item.preco ?? ""),
+        foto_url: item.foto_url ?? "",
       });
       setError(null);
       setTimeout(() => primeiroCampoRef.current?.focus(), 50);
@@ -52,6 +53,7 @@ export default function EditItemModal({
         categoria: form.categoria,
         quantidade: Number(form.quantidade) || 0,
         preco: Number(form.preco) || 0,
+        foto_url: form.foto_url,
       });
       onFechar();
     } catch (err) {
@@ -137,11 +139,11 @@ export default function EditItemModal({
                   className="campo-input font-mono"
                 />
               </Campo>
-              <Campo label="Valor (R$)">
+              <Campo label="Valor">
                 <input
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   value={form.preco}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, preco: e.target.value }))
@@ -151,6 +153,17 @@ export default function EditItemModal({
                 />
               </Campo>
             </div>
+            <Campo label="Imagem URL">
+              <input
+                type="text"
+                value={form.foto_url}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, foto_url: e.target.value }))
+                }
+                placeholder="Imagem URL"
+                className="campo-input w-full! font-mono"
+              />
+            </Campo>
 
             <button
               type="submit"
