@@ -46,7 +46,7 @@ export default function ItemCard({
         </div>
       </div>
 
-      <div className="perforation flex flex-1 flex-col justify-between gap-3 px-4 pt-3 pb-4">
+      <div className="perforation flex flex-1 flex-col justify-between gap-3 px-2 pt-3 pb-4">
         <div className="flex flex-col gap-2">
           <div className="top-2 flex w-full flex-wrap gap-1">
             {item.categoria && (

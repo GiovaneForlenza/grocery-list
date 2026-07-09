@@ -6,7 +6,7 @@ export default function CategoryFilter({
   const opcoes = ["Todos", "Precisa comprar", ...categorias.map((c) => c.nome)];
 
   return (
-    <div className="scroll-rail -mx-1 flex flex-wrap gap-2 overflow-x-auto px-1 pb-1">
+    <div className="scroll-rail -mx-1 flex flex-wrap justify-center gap-2 overflow-x-auto px-1 pb-1 sm:justify-start">
       {opcoes.map((nome) => {
         const ativo = nome === categoriaAtiva;
         const especial = nome === "Precisa comprar";
