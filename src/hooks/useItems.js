@@ -168,11 +168,32 @@ export function useItems() {
     }
   }, []);
 
+  // Atualização completa do item a partir do modal de edição
+  // (título, categoria, preço e quantidade). Não é otimista: só
+  // aplica na UI depois que o banco confirmar, já que envolve
+  // vários campos de um formulário.
+  const updateItem = useCallback(async (id, dadosAtualizados) => {
+    const { data, error } = await supabase
+      .from("itens")
+      .update(dadosAtualizados)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+
+    setItens((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...data } : item)),
+    );
+    return data;
+  }, []);
+
   return {
     itens,
     loading,
     error,
     addItem,
+    updateItem,
     updateQuantidade,
     updatePrecisaComprar,
     updateComprando,

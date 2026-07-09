@@ -3,11 +3,13 @@ import {
   ArrowDownWideNarrow,
   Check,
   ChevronDown,
+  Tags,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const OPCOES = [
   { valor: "nome-asc", rotulo: "Nome (A → Z)", icon: ArrowDownAZ },
+  { valor: "categoria-asc", rotulo: "Categoria (A → Z)", icon: Tags },
   {
     valor: "quantidade-desc",
     rotulo: "Quantidade (maior → menor)",

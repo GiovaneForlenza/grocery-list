@@ -5,6 +5,7 @@ import CategoryFilter from "./components/CategoryFilter";
 import SortDropdown from "./components/SortDropdown";
 import ItemGrid from "./components/ItemGrid";
 import AddItemModal from "./components/AddItemModal";
+import EditItemModal from "./components/EditItemModal";
 import Toast from "./components/Toast";
 import { useItems } from "./hooks/useItems";
 import { useCategories } from "./hooks/useCategories";
@@ -15,6 +16,7 @@ export default function App() {
     loading: carregandoItens,
     error: erroItens,
     addItem,
+    updateItem,
     updateQuantidade,
     updatePrecisaComprar,
     updateComprando,
@@ -30,6 +32,7 @@ export default function App() {
   const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
   const [ordenacao, setOrdenacao] = useState("nome-asc");
   const [modalAberto, setModalAberto] = useState(false);
+  const [itemEmEdicao, setItemEmEdicao] = useState(null);
   const [toast, setToast] = useState(null);
 
   function mostrarToast(mensagem, tipo = "sucesso") {
@@ -47,6 +50,14 @@ export default function App() {
 
     const ordenada = [...lista];
     switch (ordenacao) {
+      case "categoria-asc":
+        ordenada.sort((a, b) => {
+          const porCategoria = a.categoria.localeCompare(b.categoria, "pt-BR");
+          return porCategoria !== 0
+            ? porCategoria
+            : a.nome.localeCompare(b.nome, "pt-BR");
+        });
+        break;
       case "quantidade-desc":
         ordenada.sort((a, b) => b.quantidade - a.quantidade);
         break;
@@ -104,6 +115,11 @@ export default function App() {
     mostrarToast(`"${novoItem.nome}" adicionado ao estoque.`);
   }
 
+  async function handleSalvarEdicao(id, dadosAtualizados) {
+    await updateItem(id, dadosAtualizados);
+    mostrarToast(`"${dadosAtualizados.nome}" atualizado.`);
+  }
+
   async function handleAddCategoria(nome) {
     const categoria = await addCategoria(nome);
     mostrarToast(`Categoria "${categoria.nome}" criada.`);
@@ -156,6 +172,7 @@ export default function App() {
             onAlterarComprar={handleAlterarComprar}
             onAlterarComprando={handleAlterarComprando}
             onFinalizarCompra={handleFinalizarCompra}
+            onEditar={setItemEmEdicao}
           />
         )}
       </main>
@@ -166,6 +183,14 @@ export default function App() {
         onFechar={() => setModalAberto(false)}
         onAddItem={handleAddItem}
         onAddCategoria={handleAddCategoria}
+      />
+
+      <EditItemModal
+        aberto={!!itemEmEdicao}
+        item={itemEmEdicao}
+        categorias={categorias}
+        onFechar={() => setItemEmEdicao(null)}
+        onSalvar={handleSalvarEdicao}
       />
     </div>
   );

@@ -11,6 +11,7 @@ export default function ItemGrid({
   onAlterarComprar,
   onAlterarComprando,
   onFinalizarCompra,
+  onEditar,
 }) {
   const existeItemComprando = useMemo(
     () => itens.some((item) => item.comprando),
@@ -61,6 +62,7 @@ export default function ItemGrid({
             onAlterarQuantidade={onAlterarQuantidade}
             onAlterarComprar={onAlterarComprar}
             onAlterarComprando={onAlterarComprando}
+            onEditar={onEditar}
           />
         ))}
       </div>

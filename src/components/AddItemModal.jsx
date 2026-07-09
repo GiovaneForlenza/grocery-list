@@ -6,7 +6,7 @@ const ITEM_VAZIO = {
   categoria: "",
   quantidade: "1",
   preco: "",
-  photo_url: "",
+  foto_url: "",
 };
 
 export default function AddItemModal({
@@ -57,7 +57,7 @@ export default function AddItemModal({
         categoria: formItem.categoria,
         quantidade: Number(formItem.quantidade) || 0,
         preco: Number(formItem.preco) || 0,
-        photo_url: formItem.photo_url.trim() || null,
+        foto_url: formItem.foto_url.trim() || null,
       });
       onFechar();
     } catch (err) {
@@ -215,9 +215,9 @@ export default function AddItemModal({
               <Campo label="URL da photo (opcional)">
                 <input
                   type="url"
-                  value={formItem.photo_url}
+                  value={formItem.foto_url}
                   onChange={(e) =>
-                    setFormItem((f) => ({ ...f, photo_url: e.target.value }))
+                    setFormItem((f) => ({ ...f, foto_url: e.target.value }))
                   }
                   placeholder="https://…"
                   className="campo-input"
