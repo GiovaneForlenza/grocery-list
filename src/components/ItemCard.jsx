@@ -11,9 +11,11 @@ export default function ItemCard({
   item,
   onAlterarQuantidade,
   onAlterarComprar,
+  onAlterarComprando,
 }) {
   const [imagemComError, setImagemComError] = useState(false);
-  const precisaComprar = !!item.comprar;
+  const precisaComprar = !!item.precisa_comprar;
+  const comprando = !!item.comprando;
 
   return (
     <article className="group border-sage relative flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition hover:shadow-md">
@@ -47,8 +49,8 @@ export default function ItemCard({
         </div>
       </div>
 
-      <div className="perforation flex flex-1 flex-col gap-3 px-4 pt-3 pb-4">
-        <div>
+      <div className="perforation flex flex-1 flex-col justify-start gap-3 px-4 pt-3 pb-4">
+        <div className="">
           <h3 className="font-display text-ink line-clamp-2 text-base leading-snug font-semibold">
             {item.nome}
           </h3>
@@ -56,28 +58,52 @@ export default function ItemCard({
             {formatarPreco(item.preco)}
           </p>
         </div>
-        <div className="mt-auto flex flex-col items-center gap-2 sm:flex-row">
-          <QuantityStepper
-            quantidade={item.quantidade}
-            onAlterar={(novoValor) => onAlterarQuantidade(item.id, novoValor)}
-          />
-
-          <label
-            className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-md border px-2 py-2 text-[11px] font-medium transition select-none sm:h-full sm:w-fit ${
-              precisaComprar
-                ? "border-brick/40 bg-brick/10 text-brick-dark"
-                : "border-sage text-ink-faint hover:border-brick/40 hover:text-brick-dark"
-            }`}
-            title="Marcar como item a comprar"
-          >
-            <input
-              type="checkbox"
-              checked={precisaComprar}
-              onChange={(e) => onAlterarComprar(item.id, e.target.checked)}
-              className="accent-brick h-3.5 w-3.5"
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex h-full w-full flex-col items-center gap-2 sm:flex-row">
+            <QuantityStepper
+              quantidade={item.quantidade}
+              onAlterar={(novoValor) => onAlterarQuantidade(item.id, novoValor)}
             />
-            Comprar
-          </label>
+
+            <label
+              className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-md border px-2 py-2 text-[11px] font-medium transition select-none sm:h-full sm:w-fit ${
+                precisaComprar
+                  ? "border-brick/40 bg-brick/10 text-brick-dark"
+                  : "border-sage text-ink-faint hover:border-brick/40 hover:text-brick-dark"
+              }`}
+              title="Marcar como item a comprar"
+            >
+              <input
+                type="checkbox"
+                checked={precisaComprar}
+                onChange={(e) => onAlterarComprar(item.id, e.target.checked)}
+                className="accent-brick h-3.5 w-3.5"
+              />
+              Comprar
+            </label>
+          </div>
+          {precisaComprar && (
+            <div className="w-full">
+              <label
+                className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-md border px-2 py-2 text-[11px] font-medium transition select-none ${
+                  comprando
+                    ? "border-forest-dark/40 bg-forest/10 text-forest-dark"
+                    : "border-sage text-ink-faint hover:border-forest/40 hover:text-forest-dark"
+                }`}
+                title="Marcar como item a comprar"
+              >
+                <input
+                  type="checkbox"
+                  checked={comprando}
+                  onChange={(e) =>
+                    onAlterarComprando(item.id, e.target.checked)
+                  }
+                  className="accent-forest h-3.5 w-3.5"
+                />
+                Comprando
+              </label>
+            </div>
+          )}
         </div>
       </div>
     </article>

@@ -4,7 +4,10 @@
 -- Observações importantes sobre colunas que não estavam no
 -- schema original de "itens" mas que o app precisa:
 --   - preco: numeric, exibido/editado na Home e no modal
---   - comprar: boolean, controlado pelo checkbox "Comprar" no card
+--   - precisa_comprar: boolean, controlado pelo checkbox "Comprar" no card
+--   - comprando: boolean, controlado pelo checkbox "Comprando" (só
+--     aparece quando precisa_comprar = true). Ao desmarcar
+--     precisa_comprar, o app também zera comprando automaticamente.
 -- Rode os ALTER TABLE abaixo se a tabela "itens" já existir.
 -- ============================================================
 
@@ -20,7 +23,8 @@ create table if not exists itens (
   categoria text not null references categorias (nome) on update cascade,
   quantidade int4 not null default 0,
   preco numeric(10, 2) not null default 0,
-  comprar boolean not null default false,
+  precisa_comprar boolean not null default false,
+  comprando boolean not null default false,
   foto_url text
 );
 
@@ -28,7 +32,9 @@ create table if not exists itens (
 alter table itens
   add column if not exists preco numeric(10, 2) not null default 0;
 alter table itens
-  add column if not exists comprar boolean not null default false;
+  add column if not exists precisa_comprar boolean not null default false;
+alter table itens
+  add column if not exists comprando boolean not null default false;
 
 -- Habilita Row Level Security e permite leitura/escrita pública
 -- via a chave "publishable" usada no front-end. Ajuste as

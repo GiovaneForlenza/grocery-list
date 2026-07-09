@@ -15,7 +15,7 @@ export default function CategoryFilter({
             key={nome}
             type="button"
             onClick={() => onSelecionar(nome)}
-            className={`shrink-0 rounded-full border px-2 py-1 text-xs font-medium tracking-tight transition ${
+            className={`shrink-0 cursor-pointer rounded-full border px-2 py-1 text-xs font-medium tracking-tight transition ${
               ativo
                 ? especial
                   ? "border-brick bg-brick text-white shadow-sm"

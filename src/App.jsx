@@ -16,7 +16,9 @@ export default function App() {
     error: erroItens,
     addItem,
     updateQuantidade,
-    updateComprar,
+    updatePrecisaComprar,
+    updateComprando,
+    finalizarCompra,
   } = useItems();
   const {
     categorias,
@@ -38,7 +40,7 @@ export default function App() {
   const itensFiltrados = useMemo(() => {
     let lista = itens;
     if (categoriaAtiva === "Precisa comprar") {
-      lista = lista.filter((item) => item.comprar);
+      lista = lista.filter((item) => item.precisa_comprar);
     } else if (categoriaAtiva !== "Todos") {
       lista = lista.filter((item) => item.categoria === categoriaAtiva);
     }
@@ -71,9 +73,29 @@ export default function App() {
 
   async function handleAlterarComprar(id, novoValor) {
     try {
-      await updateComprar(id, novoValor);
+      await updatePrecisaComprar(id, novoValor);
     } catch (err) {
       mostrarToast(err.message || "Não foi possível atualizar o item.", "erro");
+    }
+  }
+
+  async function handleAlterarComprando(id, novoValor) {
+    try {
+      await updateComprando(id, novoValor);
+    } catch (err) {
+      mostrarToast(err.message || "Não foi possível atualizar o item.", "erro");
+    }
+  }
+
+  async function handleFinalizarCompra() {
+    try {
+      await finalizarCompra();
+      mostrarToast("Itens do carrinho marcados como comprados.");
+    } catch (err) {
+      mostrarToast(
+        err.message || "Não foi possível finalizar a compra.",
+        "erro",
+      );
     }
   }
 
@@ -92,7 +114,7 @@ export default function App() {
   const erro = erroItens || erroCategorias;
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="bg-paper min-h-screen">
       <Header onNovoItem={() => setModalAberto(true)} />
       <Toast toast={toast} />
 
@@ -107,7 +129,7 @@ export default function App() {
         </div>
 
         {erro && (
-          <div className="mb-5 flex items-start gap-2 rounded-xl border border-brick/30 bg-brick/10 px-4 py-3 text-sm text-brick-dark">
+          <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-xl border px-4 py-3 text-sm">
             <TriangleAlert
               size={17}
               className="mt-0.5 shrink-0"
@@ -122,15 +144,18 @@ export default function App() {
         )}
 
         {carregando ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-24 text-ink-faint">
+          <div className="text-ink-faint flex flex-col items-center justify-center gap-3 py-24">
             <Loader2 size={26} className="animate-spin" strokeWidth={2} />
             <p className="text-sm">Carregando itens…</p>
           </div>
         ) : (
           <ItemGrid
             itens={itensFiltrados}
+            categoriaAtiva={categoriaAtiva}
             onAlterarQuantidade={handleAlterarQuantidade}
             onAlterarComprar={handleAlterarComprar}
+            onAlterarComprando={handleAlterarComprando}
+            onFinalizarCompra={handleFinalizarCompra}
           />
         )}
       </main>
