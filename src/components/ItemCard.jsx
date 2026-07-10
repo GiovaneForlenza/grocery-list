@@ -19,7 +19,7 @@ export default function ItemCard({
   const comprando = !!item.comprando;
 
   return (
-    <article className="group border-sage relative flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition hover:shadow-md">
+    <article className="group border-sage relative flex flex-col overflow-hidden rounded-sm bg-white shadow-sm transition hover:shadow-md">
       <div className="flex h-60 flex-col flex-nowrap items-center justify-start gap-2 overflow-hidden bg-white p-2">
         <div className="relative h-full w-full flex-1">
           {item.foto_url && !imagemComError ? (

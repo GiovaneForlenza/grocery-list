@@ -145,24 +145,30 @@ export default function App() {
 
   return (
     <div className="bg-paper min-h-screen">
-      <Header onNovoItem={() => setModalAberto(true)} />
+      <Header
+        onNovoItem={() => setModalAberto(true)}
+        valorSearch={busca}
+        onChangeSearch={setBusca}
+        categorias={categorias}
+        categoriaAtiva={categoriaAtiva}
+        onSelecionar={setCategoriaAtiva}
+        valorOrdenacao={ordenacao}
+        onChangeOrdenacao={setOrdenacao}
+      />
       <Toast toast={toast} />
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <main className="mx-auto max-w-7xl px-2 py-6 sm:px-6 lg:px-8">
+        {/* <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CategoryFilter
             categorias={categorias}
             categoriaAtiva={categoriaAtiva}
             onSelecionar={setCategoriaAtiva}
           />
           <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
-        </div>
-        <div className="mb-4">
-          <SearchBar valor={busca} onChange={setBusca} />
-        </div>
+        </div> */}
 
         {erro && (
-          <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-4 py-3 text-sm">
+          <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-2 py-3 text-sm">
             <TriangleAlert
               size={17}
               className="mt-0.5 shrink-0"

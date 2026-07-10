@@ -38,7 +38,7 @@ export default function SortDropdown({ valor, onChange }) {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative shrink-0">
+    <div ref={containerRef} className="relative z-20 shrink-0">
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
@@ -59,7 +59,7 @@ export default function SortDropdown({ valor, onChange }) {
       {aberto && (
         <ul
           role="listbox"
-          className="animate-pop-in border-sage absolute right-0 z-20 mt-2 w-64 origin-top-right overflow-hidden rounded-2xl border bg-white py-1.5 shadow-lg"
+          className="animate-pop-in border-sage top-30 right-0 z-20 mt-2 w-64 origin-top-right overflow-hidden rounded-2xl border bg-white py-1.5 shadow-lg"
         >
           {OPCOES.map((opcao) => {
             const selecionado = opcao.valor === valor;

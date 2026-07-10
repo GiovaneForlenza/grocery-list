@@ -44,12 +44,12 @@ export default function ItemGrid({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="z-0 flex flex-col gap-4">
       {mostrarBotaoFinalizar && (
         <button
           type="button"
           onClick={limparListaDeCompra}
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-forest bg-forest px-3 py-2 text-sm font-medium text-paper transition hover:bg-forest-dark sm:w-fit"
+          className="border-forest bg-forest text-paper hover:bg-forest-dark flex w-full items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition sm:w-fit"
         >
           <ShoppingCart size={15} strokeWidth={2} />
           Comprei todos os itens

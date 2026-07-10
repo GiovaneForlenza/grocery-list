@@ -1,9 +1,26 @@
-import { Plus, Tags } from "lucide-react";
+import { Filter, Plus, Tags, X } from "lucide-react";
+import { useState } from "react";
+import CategoryFilter from "./CategoryFilter";
+import SearchBar from "./SearchBar";
+import SortDropdown from "./SortDropdown";
 
-export default function Header({ onNovoItem }) {
+export default function Header({
+  onNovoItem,
+  valorSearch,
+  onChangeSearch,
+  categorias,
+  categoriaAtiva,
+  onSelecionar,
+  valorOrdenacao,
+  onChangeOrdenacao,
+}) {
+  const [filterOpened, setFilterOpened] = useState(false);
+  function toggleFilterOpened() {
+    setFilterOpened(!filterOpened);
+  }
   return (
-    <header className="border-sage bg-paper/90 supports-backdrop-filter:bg-paper/75 sticky top-0 z-30 border-b backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-4 sm:flex-row sm:px-6 lg:px-8">
+    <header className="border-sage bg-paper/90 supports-backdrop-filter:bg-paper sticky top-0 z-30 border-b backdrop-blur">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-2 py-4 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <span className="bg-forest text-marigold-soft flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
             <Tags size={18} strokeWidth={2} />
@@ -17,7 +34,6 @@ export default function Header({ onNovoItem }) {
             </p>
           </div>
         </div>
-
         <button
           type="button"
           onClick={onNovoItem}
@@ -26,6 +42,30 @@ export default function Header({ onNovoItem }) {
           <Plus size={17} strokeWidth={2.5} />
           <span className="">Novo item</span>
         </button>
+        <div className="flex w-full items-stretch justify-center gap-2">
+          <SearchBar valor={valorSearch} onChangeSearch={onChangeSearch} />
+          <div
+            className="border-sage-dark flex w-12 items-center justify-center rounded-sm border bg-white"
+            onClick={toggleFilterOpened}
+          >
+            {filterOpened ? <X /> : <Filter />}
+          </div>
+        </div>
+        {filterOpened && (
+          <div className={`animate-pop-in overflow-hidden transition`}>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <CategoryFilter
+                categorias={categorias}
+                categoriaAtiva={categoriaAtiva}
+                onSelecionar={onSelecionar}
+              />
+              <SortDropdown
+                ordenacao={valorOrdenacao}
+                onChangeOrdenacao={onChangeOrdenacao}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
