@@ -161,7 +161,9 @@ export function useItems() {
     if (error) {
       setItens((prev) =>
         prev.map((item) =>
-          anteriores.has(item.id) ? { ...item, ...anteriores.get(item.id) } : item,
+          anteriores.has(item.id)
+            ? { ...item, ...anteriores.get(item.id) }
+            : item,
         ),
       );
       throw new Error(error.message);
