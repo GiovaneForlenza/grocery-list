@@ -1,12 +1,9 @@
 import { Loader2, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import AddItemModal from "./components/AddItemModal";
-import CategoryFilter from "./components/CategoryFilter";
 import EditItemModal from "./components/EditItemModal";
 import Header from "./components/Header";
 import ItemGrid from "./components/ItemGrid";
-import SearchBar from "./components/SearchBar";
-import SortDropdown from "./components/SortDropdown";
 import Toast from "./components/Toast";
 import { useCategories } from "./hooks/useCategories";
 import { useItems } from "./hooks/useItems";
@@ -166,7 +163,7 @@ export default function App() {
           />
           <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
         </div> */}
-
+        teds
         {erro && (
           <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-2 py-3 text-sm">
             <TriangleAlert
@@ -181,7 +178,6 @@ export default function App() {
             </span>
           </div>
         )}
-
         {carregando ? (
           <div className="text-ink-faint flex flex-col items-center justify-center gap-3 py-24">
             <Loader2 size={26} className="animate-spin" strokeWidth={2} />
