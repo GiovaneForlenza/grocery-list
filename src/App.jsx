@@ -163,7 +163,6 @@ export default function App() {
           />
           <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
         </div> */}
-        teds
         {erro && (
           <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-2 py-3 text-sm">
             <TriangleAlert
