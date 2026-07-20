@@ -10,7 +10,7 @@ export default function Header({
   onChangeSearch,
   categorias,
   categoriaAtiva,
-  onSelecionar,
+  onSelecionarCategoria,
   valorOrdenacao,
   onChangeOrdenacao,
 }) {
@@ -61,7 +61,7 @@ export default function Header({
               <CategoryFilter
                 categorias={categorias}
                 categoriaAtiva={categoriaAtiva}
-                onSelecionar={onSelecionar}
+                onSelecionarCategoria={onSelecionarCategoria}
               />
               <SortDropdown
                 ordenacao={valorOrdenacao}

@@ -44,9 +44,9 @@ export default function ItemCard({
             <Pencil size={14} strokeWidth={2} />
           </button>
         </div>
-        <div className="top-2 flex w-full flex-wrap gap-1 px-2">
+        <div className="top-2 flex w-full flex-wrap gap-1">
           {item.categoria && (
-            <span className="bg-paper border-forest/30 text-forest-dark rounded-sm border px-2 py-1 font-mono text-[10px] font-semibold tracking-widest uppercase">
+            <span className="bg-paper border-forest/30 text-forest-dark rounded-sm border px-2 py-1 font-mono text-[10px] font-semibold uppercase sm:tracking-widest">
               {item.categoria}
             </span>
           )}
@@ -58,7 +58,7 @@ export default function ItemCard({
         </div>
       </div>
 
-      <div className="perforation flex flex-1 flex-col justify-start gap-3 px-4 pt-3 pb-4">
+      <div className="perforation flex flex-1 flex-col justify-start gap-3 p-2">
         <div className="">
           <h3 className="font-display text-ink line-clamp-2 text-base leading-snug font-semibold">
             {item.nome}

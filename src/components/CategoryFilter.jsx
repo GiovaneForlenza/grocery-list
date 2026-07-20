@@ -1,7 +1,7 @@
 export default function CategoryFilter({
   categorias,
   categoriaAtiva,
-  onSelecionar,
+  onSelecionarCategoria,
 }) {
   const opcoes = ["Todos", "Precisa comprar", ...categorias.map((c) => c.nome)];
 
@@ -14,7 +14,7 @@ export default function CategoryFilter({
           <button
             key={nome}
             type="button"
-            onClick={() => onSelecionar(nome)}
+            onClick={() => onSelecionarCategoria(nome)}
             className={`shrink-0 cursor-pointer rounded-md border px-2 py-1 text-xs font-medium tracking-tight transition ${
               ativo
                 ? especial
