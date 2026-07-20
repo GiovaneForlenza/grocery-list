@@ -55,21 +55,22 @@ export default function Header({
             </div>
           </div>
         </div>
-        {filterOpened && (
-          <div className={`animate-pop-in overflow-hidden transition`}>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <CategoryFilter
-                categorias={categorias}
-                categoriaAtiva={categoriaAtiva}
-                onSelecionarCategoria={onSelecionarCategoria}
-              />
-              <SortDropdown
-                ordenacao={valorOrdenacao}
-                onChangeOrdenacao={onChangeOrdenacao}
-              />
-            </div>
+        {/* {filterOpened && ( */}
+        <div
+          className={`${filterOpened ? "h- h-fit" : "h-0"} animate-pop-in overflow-hidden border transition duration-500`}
+        >
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CategoryFilter
+              categorias={categorias}
+              categoriaAtiva={categoriaAtiva}
+              onSelecionarCategoria={onSelecionarCategoria}
+            />
+            <SortDropdown
+              ordenacao={valorOrdenacao}
+              onChangeOrdenacao={onChangeOrdenacao}
+            />
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
