@@ -1,15 +1,13 @@
 import { Loader2, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import AddItemModal from "./components/AddItemModal";
-import CategoryFilter from "./components/CategoryFilter";
 import EditItemModal from "./components/EditItemModal";
 import Header from "./components/Header";
 import ItemGrid from "./components/ItemGrid";
-import SearchBar from "./components/SearchBar";
-import SortDropdown from "./components/SortDropdown";
 import Toast from "./components/Toast";
 import { useCategories } from "./hooks/useCategories";
 import { useItems } from "./hooks/useItems";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   const {
@@ -151,13 +149,13 @@ export default function App() {
         onChangeSearch={setBusca}
         categorias={categorias}
         categoriaAtiva={categoriaAtiva}
-        onSelecionar={setCategoriaAtiva}
+        onSelecionarCategoria={setCategoriaAtiva}
         valorOrdenacao={ordenacao}
         onChangeOrdenacao={setOrdenacao}
       />
       <Toast toast={toast} />
-
-      <main className="mx-auto max-w-7xl px-2 py-6 sm:px-6 lg:px-8">
+      <ScrollToTop />
+      <main className="mx-auto max-w-7xl px-2 py-6 pb-18 sm:px-6 lg:px-8">
         {/* <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CategoryFilter
             categorias={categorias}
@@ -166,7 +164,6 @@ export default function App() {
           />
           <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
         </div> */}
-
         {erro && (
           <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-2 py-3 text-sm">
             <TriangleAlert
@@ -181,7 +178,6 @@ export default function App() {
             </span>
           </div>
         )}
-
         {carregando ? (
           <div className="text-ink-faint flex flex-col items-center justify-center gap-3 py-24">
             <Loader2 size={26} className="animate-spin" strokeWidth={2} />

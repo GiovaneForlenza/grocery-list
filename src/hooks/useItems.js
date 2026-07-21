@@ -11,7 +11,7 @@ export function useItems() {
     const { data, error } = await supabase
       .from("itens")
       .select("*")
-      .order("name", { ascending: true });
+      .order("nome", { ascending: true });
 
     if (error) {
       setError(error.message);
