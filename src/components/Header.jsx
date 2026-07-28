@@ -24,7 +24,7 @@ export default function Header({
         <div className="flex w-full flex-col gap-3">
           <div className="flex w-full flex-col justify-between gap-3 sm:flex-row">
             <div
-              className="flex cursor-pointer justify-center gap-3 border sm:justify-start"
+              className="flex cursor-pointer justify-center gap-3 sm:justify-start"
               onClick={() => onSelectCategory("All")}
             >
               <span className="bg-forest text-marigold-soft flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
