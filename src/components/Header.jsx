@@ -23,7 +23,11 @@ export default function Header({
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-2 py-4 sm:flex-col sm:px-6 lg:px-8">
         <div className="flex w-full flex-col gap-3">
           <div className="flex w-full flex-col justify-between gap-3 sm:flex-row">
-            <div className="flex justify-center gap-3 sm:justify-start">
+            <div
+              className="flex cursor-pointer justify-center gap-3 sm:justify-start"
+              onClick={() => onSelecionarCategoria("Todos")}
+            >
+              {" "}
               <span className="bg-forest text-marigold-soft flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
                 <Tags size={18} strokeWidth={2} />
               </span>
@@ -57,7 +61,7 @@ export default function Header({
         </div>
         {/* {filterOpened && ( */}
         <div
-          className={`${filterOpened ? "h- h-fit" : "h-0"} animate-pop-in overflow-hidden border transition duration-500`}
+          className={`${filterOpened ? "h- h-fit" : "h-0"} animate-pop-in overflow-hidden transition duration-500`}
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CategoryFilter
