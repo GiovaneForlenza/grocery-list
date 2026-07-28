@@ -1,31 +1,31 @@
 export default function CategoryFilter({
-  categorias,
-  categoriaAtiva,
-  onSelecionarCategoria,
+  categories,
+  activeCategory,
+  onSelectCategory,
 }) {
-  const opcoes = ["Todos", "Precisa comprar", ...categorias.map((c) => c.nome)];
+  const options = ["All", "Needs to buy", ...categories.map((c) => c.name)];
 
   return (
     <div className="scroll-rail -mx-1 flex flex-wrap justify-center gap-2 overflow-x-auto px-1 pb-1 sm:justify-start">
-      {opcoes.map((nome) => {
-        const ativo = nome === categoriaAtiva;
-        const especial = nome === "Precisa comprar";
+      {options.map((name) => {
+        const isActive = name === activeCategory;
+        const isSpecial = name === "Needs to buy";
         return (
           <button
-            key={nome}
+            key={name}
             type="button"
-            onClick={() => onSelecionarCategoria(nome)}
+            onClick={() => onSelectCategory(name)}
             className={`shrink-0 cursor-pointer rounded-md border px-2 py-1 text-xs font-medium tracking-tight transition ${
-              ativo
-                ? especial
+              isActive
+                ? isSpecial
                   ? "border-brick bg-brick text-white shadow-sm"
                   : "border-forest bg-forest text-paper shadow-sm"
-                : especial
+                : isSpecial
                   ? "border-brick/40 text-brick-dark hover:border-brick hover:bg-brick/5 bg-white"
                   : "border-sage-dark/60 text-ink-soft hover:border-forest-light hover:text-forest bg-white"
             }`}
           >
-            {nome}
+            {name}
           </button>
         );
       })}

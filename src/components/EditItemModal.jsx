@@ -2,81 +2,81 @@ import { Loader2, Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ConfirmDialog from "./ConfirmDialog";
 
-const ESTADO_VAZIO = { nome: "", categoria: "", quantidade: "0", preco: "" };
+const EMPTY_STATE = { name: "", category: "", quantity: "0", price: "" };
 
 export default function EditItemModal({
   item,
-  aberto,
-  categorias,
-  onFechar,
-  onSalvar,
-  onDeletar,
+  open,
+  categories,
+  onClose,
+  onSave,
+  onDelete,
 }) {
-  const [form, setForm] = useState(ESTADO_VAZIO);
-  const [enviando, setEnviando] = useState(false);
+  const [form, setForm] = useState(EMPTY_STATE);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
-  const [excluindo, setExcluindo] = useState(false);
-  const primeiroCampoRef = useRef(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const firstFieldRef = useRef(null);
 
   useEffect(() => {
-    if (aberto && item) {
+    if (open && item) {
       setForm({
-        nome: item.nome ?? "",
-        categoria: item.categoria ?? "",
-        quantidade: String(item.quantidade ?? 0),
-        preco: String(item.preco ?? ""),
+        name: item.name ?? "",
+        category: item.category ?? "",
+        quantity: String(item.quantity ?? 0),
+        price: String(item.price ?? ""),
       });
       setError(null);
-      setConfirmandoExclusao(false);
-      setTimeout(() => primeiroCampoRef.current?.focus(), 50);
+      setConfirmingDelete(false);
+      setTimeout(() => firstFieldRef.current?.focus(), 50);
     }
-  }, [aberto, item]);
+  }, [open, item]);
 
   useEffect(() => {
-    function aoTeclar(e) {
-      if (e.key === "Escape" && !confirmandoExclusao) onFechar();
+    function handleKeyDown(e) {
+      if (e.key === "Escape" && !confirmingDelete) onClose();
     }
-    if (aberto) document.addEventListener("keydown", aoTeclar);
-    return () => document.removeEventListener("keydown", aoTeclar);
-  }, [aberto, confirmandoExclusao, onFechar]);
+    if (open) document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, confirmingDelete, onClose]);
 
-  if (!aberto || !item) return null;
+  if (!open || !item) return null;
 
-  async function enviar(e) {
+  async function submit(e) {
     e.preventDefault();
     setError(null);
 
-    if (!form.nome.trim()) return setError("Informe o nome do item.");
-    if (!form.categoria) return setError("Selecione uma categoria.");
+    if (!form.name.trim()) return setError("Enter the item name.");
+    if (!form.category) return setError("Select a category.");
 
-    setEnviando(true);
+    setSubmitting(true);
     try {
-      await onSalvar(item.id, {
-        nome: form.nome.trim(),
-        categoria: form.categoria,
-        quantidade: Number(form.quantidade) || 0,
-        preco: Number(form.preco) || 0,
+      await onSave(item.id, {
+        name: form.name.trim(),
+        category: form.category,
+        quantity: Number(form.quantity) || 0,
+        price: Number(form.price) || 0,
       });
-      onFechar();
+      onClose();
     } catch (err) {
-      setError(err.message || "Não foi possível salvar as alterações.");
+      setError(err.message || "Could not save the changes.");
     } finally {
-      setEnviando(false);
+      setSubmitting(false);
     }
   }
 
-  async function handleConfirmarExclusao() {
-    setExcluindo(true);
+  async function handleConfirmDelete() {
+    setDeleting(true);
     try {
-      await onDeletar(item.id);
-      setConfirmandoExclusao(false);
-      onFechar();
+      await onDelete(item.id);
+      setConfirmingDelete(false);
+      onClose();
     } catch (err) {
-      setConfirmandoExclusao(false);
-      setError(err.message || "Não foi possível excluir o item.");
+      setConfirmingDelete(false);
+      setError(err.message || "Could not delete the item.");
     } finally {
-      setExcluindo(false);
+      setDeleting(false);
     }
   }
 
@@ -84,19 +84,19 @@ export default function EditItemModal({
     <div
       className="bg-ink/40 fixed inset-0 z-40 flex items-center justify-center px-2 backdrop-blur-sm"
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onFechar();
+        if (e.target === e.currentTarget) onClose();
       }}
     >
       <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-md border bg-white shadow-xl sm:rounded-3xl">
         <div className="border-sage flex items-center justify-between border-b px-5 py-4">
           <div className="text-forest-dark flex items-center gap-2 text-sm font-medium">
             <Pencil size={15} strokeWidth={2} />
-            Editar item
+            Edit item
           </div>
           <button
             type="button"
-            onClick={onFechar}
-            aria-label="Fechar"
+            onClick={onClose}
+            aria-label="Close"
             className="text-ink-faint hover:bg-paper-dim hover:text-ink flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition"
           >
             <X size={18} strokeWidth={2} />
@@ -110,106 +110,106 @@ export default function EditItemModal({
             </p>
           )}
 
-          <form onSubmit={enviar} className="flex flex-col gap-4">
-            <Campo label="Título">
+          <form onSubmit={submit} className="flex flex-col gap-4">
+            <Field label="Title">
               <input
-                ref={primeiroCampoRef}
+                ref={firstFieldRef}
                 type="text"
-                value={form.nome}
+                value={form.name}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, nome: e.target.value }))
+                  setForm((f) => ({ ...f, name: e.target.value }))
                 }
-                placeholder="Ex.: Arroz branco 5kg"
-                className="campo-input"
+                placeholder="E.g.: White rice 5kg"
+                className="field-input"
               />
-            </Campo>
+            </Field>
 
-            <Campo label="Categoria">
+            <Field label="Category">
               <select
-                value={form.categoria}
+                value={form.category}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, categoria: e.target.value }))
+                  setForm((f) => ({ ...f, category: e.target.value }))
                 }
-                className="campo-input"
+                className="field-input"
               >
                 <option value="" disabled>
-                  Selecione…
+                  Select…
                 </option>
-                {categorias.map((c) => (
-                  <option key={c.id ?? c.nome} value={c.nome}>
-                    {c.nome}
+                {categories.map((c) => (
+                  <option key={c.id ?? c.name} value={c.name}>
+                    {c.name}
                   </option>
                 ))}
               </select>
-            </Campo>
+            </Field>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Campo label="Quantidade em estoque">
+              <Field label="Quantity in stock">
                 <input
                   type="number"
                   min="0"
                   step="1"
-                  value={form.quantidade}
+                  value={form.quantity}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, quantidade: e.target.value }))
+                    setForm((f) => ({ ...f, quantity: e.target.value }))
                   }
-                  className="campo-input font-mono"
+                  className="field-input font-mono"
                 />
-              </Campo>
-              <Campo label="Valor (R$)">
+              </Field>
+              <Field label="Price (R$)">
                 <input
                   type="number"
                   min="0"
                   step="0.01"
-                  value={form.preco}
+                  value={form.price}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, preco: e.target.value }))
+                    setForm((f) => ({ ...f, price: e.target.value }))
                   }
-                  placeholder="0,00"
-                  className="campo-input font-mono"
+                  placeholder="0.00"
+                  className="field-input font-mono"
                 />
-              </Campo>
+              </Field>
             </div>
 
             <button
               type="submit"
-              disabled={enviando}
+              disabled={submitting}
               className="bg-forest text-paper hover:bg-forest-dark mt-1 flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {enviando && (
+              {submitting && (
                 <Loader2 size={15} className="animate-spin" strokeWidth={2.5} />
               )}
-              Salvar alterações
+              Save changes
             </button>
 
             <button
               type="button"
-              onClick={() => setConfirmandoExclusao(true)}
+              onClick={() => setConfirmingDelete(true)}
               className="text-brick hover:bg-brick/10 flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium transition"
             >
               <Trash2 size={15} strokeWidth={2} />
-              Deletar produto
+              Delete product
             </button>
           </form>
         </div>
       </div>
 
       <ConfirmDialog
-        aberto={confirmandoExclusao}
-        titulo="Excluir produto?"
-        mensagem={`Isso vai remover "${item.nome}" do estoque permanentemente. Essa ação não pode ser desfeita.`}
-        textoConfirmar="Excluir"
-        textoCancelar="Cancelar"
-        carregando={excluindo}
-        perigoso
-        onConfirmar={handleConfirmarExclusao}
-        onCancelar={() => setConfirmandoExclusao(false)}
+        open={confirmingDelete}
+        title="Delete product?"
+        message={`This will permanently remove "${item.name}" from the inventory. This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleting}
+        danger
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmingDelete(false)}
       />
     </div>
   );
 }
 
-function Campo({ label, children }) {
+function Field({ label, children }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-ink-faint text-xs font-medium tracking-wide uppercase">

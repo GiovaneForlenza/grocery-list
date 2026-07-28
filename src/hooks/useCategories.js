@@ -2,52 +2,52 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 export function useCategories() {
-  const [categorias, setCategorias] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const fetchCategorias = useCallback(async () => {
+  const fetchCategories = useCallback(async () => {
     setLoading(true)
     const { data, error } = await supabase
-      .from('categorias')
+      .from('categories')
       .select('*')
-      .order('nome', { ascending: true })
+      .order('name', { ascending: true })
 
     if (error) {
       setError(error.message)
     } else {
-      setCategorias(data || [])
+      setCategories(data || [])
       setError(null)
     }
     setLoading(false)
   }, [])
 
   useEffect(() => {
-    fetchCategorias()
-  }, [fetchCategorias])
+    fetchCategories()
+  }, [fetchCategories])
 
-  const addCategoria = useCallback(async (nome) => {
-    const nomeLimpo = nome.trim()
-    if (!nomeLimpo) throw new Error('Informe um nome para a categoria.')
+  const addCategory = useCallback(async (name) => {
+    const cleanName = name.trim()
+    if (!cleanName) throw new Error('Enter a name for the category.')
 
-    const jaExiste = categorias.some(
-      (c) => c.nome.toLowerCase() === nomeLimpo.toLowerCase()
+    const alreadyExists = categories.some(
+      (c) => c.name.toLowerCase() === cleanName.toLowerCase()
     )
-    if (jaExiste) throw new Error('Essa categoria já existe.')
+    if (alreadyExists) throw new Error('That category already exists.')
 
     const { data, error } = await supabase
-      .from('categorias')
-      .insert({ nome: nomeLimpo })
+      .from('categories')
+      .insert({ name: cleanName })
       .select()
       .single()
 
     if (error) throw new Error(error.message)
 
-    setCategorias((prev) =>
-      [...prev, data].sort((a, b) => a.nome.localeCompare(b.nome))
+    setCategories((prev) =>
+      [...prev, data].sort((a, b) => a.name.localeCompare(b.name))
     )
     return data
-  }, [categorias])
+  }, [categories])
 
-  return { categorias, loading, error, addCategoria, refetch: fetchCategorias }
+  return { categories, loading, error, addCategory, refetch: fetchCategories }
 }

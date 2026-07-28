@@ -2,57 +2,57 @@ import { ImageOff, Pencil } from "lucide-react";
 import { useState } from "react";
 import QuantityStepper from "./QuantityStepper";
 
-const formatarPreco = (valor) =>
+const formatPrice = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
-    Number(valor) || 0,
+    Number(value) || 0,
   );
 
 export default function ItemCard({
   item,
-  onAlterarQuantidade,
-  onAlterarComprar,
-  onAlterarComprando,
-  onEditar,
+  onChangeQuantity,
+  onToggleNeedsPurchase,
+  onToggleIsPurchasing,
+  onEdit,
 }) {
-  const [imagemComError, setImagemComError] = useState(false);
-  const precisaComprar = !!item.precisa_comprar;
-  const comprando = !!item.comprando;
+  const [imageError, setImageError] = useState(false);
+  const needsPurchase = !!item.needs_purchase;
+  const isPurchasing = !!item.is_purchasing;
 
   return (
     <article className="group border-sage relative flex flex-col overflow-hidden rounded-sm bg-white shadow-sm transition hover:shadow-md">
       <div className="flex h-60 flex-col flex-nowrap items-center justify-start gap-2 overflow-hidden bg-white p-2">
         <div className="relative h-full w-full flex-1">
-          {item.foto_url && !imagemComError ? (
+          {item.photo_url && !imageError ? (
             <div
-              style={{ backgroundImage: `url(${item.foto_url})` }}
+              style={{ backgroundImage: `url(${item.photo_url})` }}
               className={`h-full w-full bg-contain bg-center bg-no-repeat`}
             ></div>
           ) : (
             <div className="text-ink-faint flex h-full w-full flex-col items-center justify-center gap-1.5">
               <ImageOff size={48} strokeWidth={1.5} />
-              <span className="text-[11px]">Sem photo</span>
+              <span className="text-[11px]">No photo</span>
             </div>
           )}
 
           <button
             type="button"
-            onClick={() => onEditar(item)}
-            aria-label={`Editar ${item.nome}`}
-            title="Editar item"
+            onClick={() => onEdit(item)}
+            aria-label={`Edit ${item.name}`}
+            title="Edit item"
             className="border-sage text-ink-soft hover:border-forest-light hover:text-forest absolute top-1 right-1 flex h-8 w-8 items-center justify-center rounded-full border bg-white/90 shadow-sm transition"
           >
             <Pencil size={14} strokeWidth={2} />
           </button>
         </div>
         <div className="top-2 flex w-full flex-wrap gap-1">
-          {item.categoria && (
+          {item.category && (
             <span className="bg-paper border-forest/30 text-forest-dark rounded-sm border px-2 py-1 font-mono text-[10px] font-semibold uppercase sm:tracking-widest">
-              {item.categoria}
+              {item.category}
             </span>
           )}
-          {precisaComprar && (
+          {needsPurchase && (
             <span className="bg-brick rounded-sm px-2 py-1 text-[10px] font-semibold tracking-widest text-white uppercase shadow-sm">
-              Comprar
+              Buy
             </span>
           )}
         </div>
@@ -61,55 +61,55 @@ export default function ItemCard({
       <div className="perforation flex flex-1 flex-col justify-start gap-3 p-2">
         <div className="">
           <h3 className="font-display text-ink line-clamp-2 text-base leading-snug font-semibold">
-            {item.nome}
+            {item.name}
           </h3>
           <p className="text-marigold-dark mt-1 font-mono text-lg font-semibold">
-            {formatarPreco(item.preco)}
+            {formatPrice(item.price)}
           </p>
         </div>
         <div className="flex flex-col items-center gap-2">
           <div className="flex h-full w-full flex-col items-center gap-2 sm:flex-row">
             <QuantityStepper
-              quantidade={item.quantidade}
-              onAlterar={(novoValor) => onAlterarQuantidade(item.id, novoValor)}
+              quantity={item.quantity}
+              onChange={(newValue) => onChangeQuantity(item.id, newValue)}
             />
 
             <label
               className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-sm border px-2 py-2 text-[11px] font-medium transition select-none sm:h-full sm:w-fit ${
-                precisaComprar
+                needsPurchase
                   ? "border-brick/40 bg-brick/10 text-brick-dark"
                   : "border-sage text-ink-faint hover:border-brick/40 hover:text-brick-dark"
               }`}
-              title="Marcar como item a comprar"
+              title="Mark as an item to buy"
             >
               <input
                 type="checkbox"
-                checked={precisaComprar}
-                onChange={(e) => onAlterarComprar(item.id, e.target.checked)}
+                checked={needsPurchase}
+                onChange={(e) => onToggleNeedsPurchase(item.id, e.target.checked)}
                 className="accent-brick h-3.5 w-3.5"
               />
-              Comprar
+              Buy
             </label>
           </div>
-          {precisaComprar && (
+          {needsPurchase && (
             <div className="w-full">
               <label
                 className={`flex w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-sm border px-2 py-2 text-[11px] font-medium transition select-none ${
-                  comprando
+                  isPurchasing
                     ? "border-forest-dark/40 bg-forest/10 text-forest-dark"
                     : "border-sage text-ink-faint hover:border-forest/40 hover:text-forest-dark"
                 }`}
-                title="Marcar como item a comprar"
+                title="Mark as currently in the cart"
               >
                 <input
                   type="checkbox"
-                  checked={comprando}
+                  checked={isPurchasing}
                   onChange={(e) =>
-                    onAlterarComprando(item.id, e.target.checked)
+                    onToggleIsPurchasing(item.id, e.target.checked)
                   }
                   className="accent-forest h-3.5 w-3.5"
                 />
-                Comprando
+                In cart
               </label>
             </div>
           )}
