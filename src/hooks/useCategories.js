@@ -57,7 +57,7 @@ export function useCategories() {
     loading,
     error,
     addCategory,
-    formatDate,
+    // formatDate,
     refetch: fetchCategories,
   };
 }
