@@ -57,7 +57,7 @@ export default function Header({
         </div>
         {/* {filterOpened && ( */}
         <div
-          className={`${filterOpened ? "h- h-fit" : "h-0"} animate-pop-in overflow-hidden border transition duration-500`}
+          className={`${filterOpened ? "h- h-fit" : "h-0"} animate-pop-in overflow-hidden transition duration-500`}
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CategoryFilter

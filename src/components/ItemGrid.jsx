@@ -45,6 +45,7 @@ export default function ItemGrid({
 
   return (
     <div className="z-0 flex flex-col gap-4">
+      asd
       {mostrarBotaoFinalizar && (
         <button
           type="button"
