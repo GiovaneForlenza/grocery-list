@@ -5,7 +5,7 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
 
 if (!supabaseUrl || !supabaseKey) {
   console.error(
-    'Supabase: variáveis de ambiente ausentes. Confira o arquivo .env (VITE_SUPABASE_URL / VITE_SUPABASE_KEY).'
+    'Supabase: missing environment variables. Check the .env file (VITE_SUPABASE_URL / VITE_SUPABASE_KEY).'
   )
 }
 

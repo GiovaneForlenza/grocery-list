@@ -1,86 +1,86 @@
 import { Loader2, Package, Tag, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const ITEM_VAZIO = {
-  nome: "",
-  categoria: "",
-  quantidade: "1",
-  preco: "",
-  foto_url: "",
+const EMPTY_ITEM = {
+  name: "",
+  category: "",
+  quantity: "1",
+  price: "",
+  photo_url: "",
 };
 
 export default function AddItemModal({
-  aberto,
-  categorias,
-  onFechar,
+  open,
+  categories,
+  onClose,
   onAddItem,
-  onAddCategoria,
+  onAddCategory,
 }) {
-  const [aba, setAba] = useState("item");
-  const [formItem, setFormItem] = useState(ITEM_VAZIO);
-  const [nomeCategoria, setNomeCategoria] = useState("");
-  const [enviando, setEnviando] = useState(false);
+  const [tab, setTab] = useState("item");
+  const [itemForm, setItemForm] = useState(EMPTY_ITEM);
+  const [categoryName, setCategoryName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const primeiroCampoRef = useRef(null);
+  const firstFieldRef = useRef(null);
 
   useEffect(() => {
-    if (aberto) {
-      setAba("item");
-      setFormItem(ITEM_VAZIO);
-      setNomeCategoria("");
+    if (open) {
+      setTab("item");
+      setItemForm(EMPTY_ITEM);
+      setCategoryName("");
       setError(null);
-      setTimeout(() => primeiroCampoRef.current?.focus(), 50);
+      setTimeout(() => firstFieldRef.current?.focus(), 50);
     }
-  }, [aberto]);
+  }, [open]);
 
   useEffect(() => {
-    function aoTeclar(e) {
-      if (e.key === "Escape") onFechar();
+    function handleKeyDown(e) {
+      if (e.key === "Escape") onClose();
     }
-    if (aberto) document.addEventListener("keydown", aoTeclar);
-    return () => document.removeEventListener("keydown", aoTeclar);
-  }, [aberto, onFechar]);
+    if (open) document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
 
-  if (!aberto) return null;
+  if (!open) return null;
 
-  async function enviarItem(e) {
+  async function submitItem(e) {
     e.preventDefault();
     setError(null);
 
-    if (!formItem.nome.trim()) return setError("Inform o nome do item.");
-    if (!formItem.categoria) return setError("Selecione uma categoria.");
+    if (!itemForm.name.trim()) return setError("Enter the item name.");
+    if (!itemForm.category) return setError("Select a category.");
 
-    setEnviando(true);
+    setSubmitting(true);
     try {
       await onAddItem({
-        nome: formItem.nome.trim(),
-        categoria: formItem.categoria,
-        quantidade: Number(formItem.quantidade) || 0,
-        preco: Number(formItem.preco) || 0,
-        foto_url: formItem.foto_url.trim() || null,
+        name: itemForm.name.trim(),
+        category: itemForm.category,
+        quantity: Number(itemForm.quantity) || 0,
+        price: Number(itemForm.price) || 0,
+        photo_url: itemForm.photo_url.trim() || null,
       });
-      onFechar();
+      onClose();
     } catch (err) {
-      setError(err.message || "Não foi possível salvar o item.");
+      setError(err.message || "Could not save the item.");
     } finally {
-      setEnviando(false);
+      setSubmitting(false);
     }
   }
 
-  async function enviarCategoria(e) {
+  async function submitCategory(e) {
     e.preventDefault();
     setError(null);
 
-    setEnviando(true);
+    setSubmitting(true);
     try {
-      const nova = await onAddCategoria(nomeCategoria);
-      setNomeCategoria("");
-      setFormItem((f) => ({ ...f, categoria: nova.nome }));
-      setAba("item");
+      const newCategory = await onAddCategory(categoryName);
+      setCategoryName("");
+      setItemForm((f) => ({ ...f, category: newCategory.name }));
+      setTab("item");
     } catch (err) {
-      setError(err.message || "Não foi possível salvar a categoria.");
+      setError(err.message || "Could not save the category.");
     } finally {
-      setEnviando(false);
+      setSubmitting(false);
     }
   }
 
@@ -88,7 +88,7 @@ export default function AddItemModal({
     <div
       className="bg-ink/40 fixed inset-0 z-40 flex items-center justify-center px-2 backdrop-blur-sm"
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onFechar();
+        if (e.target === e.currentTarget) onClose();
       }}
     >
       <div className="animate-pop-in border-sage flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-md border bg-white shadow-xl">
@@ -96,34 +96,34 @@ export default function AddItemModal({
           <div className="flex w-full flex-col gap-1 sm:flex-row">
             <button
               type="button"
-              onClick={() => setAba("item")}
+              onClick={() => setTab("item")}
               className={`flex items-center gap-1.5 rounded-md px-3.5 py-2.5 text-sm font-medium transition ${
-                aba === "item"
+                tab === "item"
                   ? "border-sage text-forest-dark border border-b bg-white sm:border-b-0"
                   : "text-ink-faint hover:text-ink-soft"
               }`}
             >
               <Package size={15} strokeWidth={2} />
-              Novo item
+              New item
             </button>
             <button
               type="button"
-              onClick={() => setAba("categoria")}
+              onClick={() => setTab("category")}
               className={`flex items-center gap-1.5 rounded-t-md px-3.5 py-2.5 text-sm font-medium transition ${
-                aba === "categoria"
+                tab === "category"
                   ? "border-sage text-forest-dark border border-b bg-white sm:border-b-0"
                   : "text-ink-faint hover:text-ink-soft"
               }`}
             >
               <Tag size={15} strokeWidth={2} />
-              Nova categoria
+              New category
             </button>
           </div>
 
           <button
             type="button"
-            onClick={onFechar}
-            aria-label="Fechar"
+            onClick={onClose}
+            aria-label="Close"
             className="text-ink-faint hover:bg-paper-dim hover:text-ink -mt-1 flex h-8 w-16 shrink-0 items-center justify-center rounded-full transition"
           >
             <X size={18} strokeWidth={2} />
@@ -137,108 +137,108 @@ export default function AddItemModal({
             </p>
           )}
 
-          {aba === "item" ? (
-            <form onSubmit={enviarItem} className="flex flex-col gap-4">
-              <Campo label="Nome do item">
+          {tab === "item" ? (
+            <form onSubmit={submitItem} className="flex flex-col gap-4">
+              <Field label="Item name">
                 <input
-                  ref={primeiroCampoRef}
+                  ref={firstFieldRef}
                   type="text"
-                  value={formItem.nome}
+                  value={itemForm.name}
                   onChange={(e) =>
-                    setFormItem((f) => ({ ...f, nome: e.target.value }))
+                    setItemForm((f) => ({ ...f, name: e.target.value }))
                   }
-                  placeholder="Ex.: Arroz branco 5kg"
-                  className="campo-input"
+                  placeholder="E.g.: White rice 5kg"
+                  className="field-input"
                 />
-              </Campo>
+              </Field>
 
-              <Campo label="Categoria">
-                {categorias.length === 0 ? (
+              <Field label="Category">
+                {categories.length === 0 ? (
                   <p className="border-sage-dark/60 bg-paper-dim text-ink-faint rounded-lg border border-dashed px-3 py-2.5 text-sm">
-                    Nenhuma categoria cadastrada.{" "}
+                    No categories registered yet.{" "}
                     <button
                       type="button"
-                      onClick={() => setAba("categoria")}
+                      onClick={() => setTab("category")}
                       className="text-forest font-medium underline underline-offset-2"
                     >
-                      Criar uma agora
+                      Create one now
                     </button>
                   </p>
                 ) : (
                   <select
-                    value={formItem.categoria}
+                    value={itemForm.category}
                     onChange={(e) =>
-                      setFormItem((f) => ({ ...f, categoria: e.target.value }))
+                      setItemForm((f) => ({ ...f, category: e.target.value }))
                     }
-                    className="campo-input"
+                    className="field-input"
                   >
                     <option value="" disabled>
-                      Selecione…
+                      Select…
                     </option>
-                    {categorias.map((c) => (
-                      <option key={c.id ?? c.nome} value={c.nome}>
-                        {c.nome}
+                    {categories.map((c) => (
+                      <option key={c.id ?? c.name} value={c.name}>
+                        {c.name}
                       </option>
                     ))}
                   </select>
                 )}
-              </Campo>
+              </Field>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Campo label="Quantidade">
+                <Field label="Quantity">
                   <input
                     type="number"
                     min="0"
                     step="1"
-                    value={formItem.quantidade}
+                    value={itemForm.quantity}
                     onChange={(e) =>
-                      setFormItem((f) => ({ ...f, quantidade: e.target.value }))
+                      setItemForm((f) => ({ ...f, quantity: e.target.value }))
                     }
-                    className="campo-input font-mono"
+                    className="field-input font-mono"
                   />
-                </Campo>
-                <Campo label="Preço (R$)">
+                </Field>
+                <Field label="Price (R$)">
                   <input
                     type="number"
                     min="0"
                     step="0.01"
-                    value={formItem.preco}
+                    value={itemForm.price}
                     onChange={(e) =>
-                      setFormItem((f) => ({ ...f, preco: e.target.value }))
+                      setItemForm((f) => ({ ...f, price: e.target.value }))
                     }
-                    placeholder="0,00"
-                    className="campo-input font-mono"
+                    placeholder="0.00"
+                    className="field-input font-mono"
                   />
-                </Campo>
+                </Field>
               </div>
 
-              <Campo label="URL da photo (opcional)">
+              <Field label="Photo URL (optional)">
                 <input
                   type="url"
-                  value={formItem.foto_url}
+                  value={itemForm.photo_url}
                   onChange={(e) =>
-                    setFormItem((f) => ({ ...f, foto_url: e.target.value }))
+                    setItemForm((f) => ({ ...f, photo_url: e.target.value }))
                   }
                   placeholder="https://…"
-                  className="campo-input"
+                  className="field-input"
                 />
-              </Campo>
+              </Field>
 
-              <BotaoSalvar enviando={enviando} texto="Salvar item" />
+              <SaveButton submitting={submitting} text="Save item" />
             </form>
           ) : (
-            <form onSubmit={enviarCategoria} className="flex flex-col gap-4">
-              <Campo label="Nome da categoria">
+            <form onSubmit={submitCategory} className="flex flex-col gap-4">
+              <Field label="Category name">
                 <input
                   type="text"
-                  value={nomeCategoria}
-                  onChange={(e) => setNomeCategoria(e.target.value)}
-                  placeholder="Ex.: Hortifruti"
-                  className="campo-input"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                  placeholder="E.g.: Produce"
+                  className="field-input"
                   autoFocus
                 />
-              </Campo>
-              <BotaoSalvar enviando={enviando} texto="Salvar categoria" />
+              </Field>
+              <SaveButton submitting={submitting} text="Save category" />
             </form>
           )}
         </div>
@@ -247,7 +247,7 @@ export default function AddItemModal({
   );
 }
 
-function Campo({ label, children }) {
+function Field({ label, children }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-ink-faint text-xs font-medium tracking-wide uppercase">
@@ -258,17 +258,17 @@ function Campo({ label, children }) {
   );
 }
 
-function BotaoSalvar({ enviando, texto }) {
+function SaveButton({ submitting, text }) {
   return (
     <button
       type="submit"
-      disabled={enviando}
+      disabled={submitting}
       className="bg-forest text-paper hover:bg-forest-dark mt-1 flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-70"
     >
-      {enviando && (
+      {submitting && (
         <Loader2 size={15} className="animate-spin" strokeWidth={2.5} />
       )}
-      {texto}
+      {text}
     </button>
   );
 }

@@ -2,167 +2,167 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 export function useItems() {
-  const [itens, setItens] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchItens = useCallback(async () => {
+  const fetchItems = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("itens")
+      .from("items")
       .select("*")
-      .order("nome", { ascending: true });
+      .order("name", { ascending: true });
 
     if (error) {
       setError(error.message);
     } else {
-      setItens(data || []);
+      setItems(data || []);
       setError(null);
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchItens();
-  }, [fetchItens]);
+    fetchItems();
+  }, [fetchItems]);
 
-  const addItem = useCallback(async (novoItem) => {
+  const addItem = useCallback(async (newItem) => {
     const { data, error } = await supabase
-      .from("itens")
-      .insert(novoItem)
+      .from("items")
+      .insert(newItem)
       .select()
       .single();
 
     if (error) throw new Error(error.message);
 
-    setItens((prev) => [...prev, data]);
+    setItems((prev) => [...prev, data]);
     return data;
   }, []);
 
-  // Atualização otimista: muda a UI antes da resposta do banco e
-  // reverte caso a chamada falhe.
-  const updateQuantidade = useCallback(async (id, novaQuantidade) => {
-    if (novaQuantidade < 0) return;
+  // Optimistic update: changes the UI before the database responds
+  // and reverts if the call fails.
+  const updateQuantity = useCallback(async (id, newQuantity) => {
+    if (newQuantity < 0) return;
 
-    let quantidadeAnterior;
-    setItens((prev) =>
+    let previousQuantity;
+    setItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          quantidadeAnterior = item.quantidade;
-          return { ...item, quantidade: novaQuantidade };
+          previousQuantity = item.quantity;
+          return { ...item, quantity: newQuantity };
         }
         return item;
       }),
     );
 
     const { error } = await supabase
-      .from("itens")
-      .update({ quantidade: novaQuantidade })
+      .from("items")
+      .update({ quantity: newQuantity })
       .eq("id", id);
 
     if (error) {
-      setItens((prev) =>
+      setItems((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, quantidade: quantidadeAnterior } : item,
+          item.id === id ? { ...item, quantity: previousQuantity } : item,
         ),
       );
       throw new Error(error.message);
     }
   }, []);
 
-  // Atualização otimista do checkbox "precisa_comprar".
-  // Regra: se o item deixar de precisar ser comprado, ele também
-  // sai automaticamente do carrinho ("comprando" volta para false).
-  const updatePrecisaComprar = useCallback(async (id, novoValor) => {
-    let anterior;
-    setItens((prev) =>
+  // Optimistic update for the "needs_purchase" checkbox.
+  // Rule: if the item no longer needs to be bought, it also
+  // automatically leaves the cart ("is_purchasing" goes back to false).
+  const updateNeedsPurchase = useCallback(async (id, newValue) => {
+    let previous;
+    setItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          anterior = {
-            precisa_comprar: item.precisa_comprar,
-            comprando: item.comprando,
+          previous = {
+            needs_purchase: item.needs_purchase,
+            is_purchasing: item.is_purchasing,
           };
-          const atualizado = { ...item, precisa_comprar: novoValor };
-          if (!novoValor) atualizado.comprando = false;
-          return atualizado;
+          const updated = { ...item, needs_purchase: newValue };
+          if (!newValue) updated.is_purchasing = false;
+          return updated;
         }
         return item;
       }),
     );
 
-    const payload = { precisa_comprar: novoValor };
-    if (!novoValor) payload.comprando = false;
+    const payload = { needs_purchase: newValue };
+    if (!newValue) payload.is_purchasing = false;
 
-    const { error } = await supabase.from("itens").update(payload).eq("id", id);
+    const { error } = await supabase.from("items").update(payload).eq("id", id);
 
     if (error) {
-      setItens((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, ...anterior } : item)),
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, ...previous } : item)),
       );
       throw new Error(error.message);
     }
   }, []);
 
-  const updateComprando = useCallback(async (id, novoValor) => {
-    let valorAnterior;
-    setItens((prev) =>
+  const updateIsPurchasing = useCallback(async (id, newValue) => {
+    let previousValue;
+    setItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          valorAnterior = item.comprando;
-          return { ...item, comprando: novoValor };
+          previousValue = item.is_purchasing;
+          return { ...item, is_purchasing: newValue };
         }
         return item;
       }),
     );
 
     const { error } = await supabase
-      .from("itens")
-      .update({ comprando: novoValor })
+      .from("items")
+      .update({ is_purchasing: newValue })
       .eq("id", id);
 
     if (error) {
-      setItens((prev) =>
+      setItems((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, comprando: valorAnterior } : item,
+          item.id === id ? { ...item, is_purchasing: previousValue } : item,
         ),
       );
       throw new Error(error.message);
     }
   }, []);
 
-  // Ação em lote do botão "Comprei todos os itens": para todo item
-  // com comprando = true, zera comprando e precisa_comprar em uma
-  // única chamada ao banco.
-  const finalizarCompra = useCallback(async () => {
-    let idsAfetados = [];
-    let anteriores = new Map();
+  // Bulk action for the "I bought everything" button: for every item
+  // with is_purchasing = true, clear is_purchasing and needs_purchase
+  // in a single database call.
+  const finishShopping = useCallback(async () => {
+    let affectedIds = [];
+    let previousValues = new Map();
 
-    setItens((prev) =>
+    setItems((prev) =>
       prev.map((item) => {
-        if (item.comprando) {
-          idsAfetados.push(item.id);
-          anteriores.set(item.id, {
-            precisa_comprar: item.precisa_comprar,
-            comprando: item.comprando,
+        if (item.is_purchasing) {
+          affectedIds.push(item.id);
+          previousValues.set(item.id, {
+            needs_purchase: item.needs_purchase,
+            is_purchasing: item.is_purchasing,
           });
-          return { ...item, precisa_comprar: false, comprando: false };
+          return { ...item, needs_purchase: false, is_purchasing: false };
         }
         return item;
       }),
     );
 
-    if (idsAfetados.length === 0) return;
+    if (affectedIds.length === 0) return;
 
     const { error } = await supabase
-      .from("itens")
-      .update({ precisa_comprar: false, comprando: false })
-      .in("id", idsAfetados);
+      .from("items")
+      .update({ needs_purchase: false, is_purchasing: false })
+      .in("id", affectedIds);
 
     if (error) {
-      setItens((prev) =>
+      setItems((prev) =>
         prev.map((item) =>
-          anteriores.has(item.id)
-            ? { ...item, ...anteriores.get(item.id) }
+          previousValues.has(item.id)
+            ? { ...item, ...previousValues.get(item.id) }
             : item,
         ),
       );
@@ -170,61 +170,61 @@ export function useItems() {
     }
   }, []);
 
-  // Atualização completa do item a partir do modal de edição
-  // (título, categoria, preço e quantidade). Não é otimista: só
-  // aplica na UI depois que o banco confirmar, já que envolve
-  // vários campos de um formulário.
-  const updateItem = useCallback(async (id, dadosAtualizados) => {
+  // Full item update from the edit modal (title, category, price and
+  // quantity). Not optimistic: only applied to the UI after the
+  // database confirms, since it involves several form fields at once.
+  const updateItem = useCallback(async (id, updatedData) => {
     const { data, error } = await supabase
-      .from("itens")
-      .update(dadosAtualizados)
+      .from("items")
+      .update(updatedData)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw new Error(error.message);
 
-    setItens((prev) =>
+    setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, ...data } : item)),
     );
     return data;
   }, []);
 
-  // Remove o item do banco. Otimista: some da UI na hora e volta
-  // pro lugar (na posição original) se a exclusão falhar.
+  // Removes the item from the database. Optimistic: disappears from
+  // the UI immediately and is restored to its original position if
+  // the deletion fails.
   const deleteItem = useCallback(async (id) => {
-    let itemRemovido;
-    let indiceOriginal;
-    setItens((prev) => {
-      indiceOriginal = prev.findIndex((item) => item.id === id);
-      itemRemovido = prev[indiceOriginal];
+    let removedItem;
+    let originalIndex;
+    setItems((prev) => {
+      originalIndex = prev.findIndex((item) => item.id === id);
+      removedItem = prev[originalIndex];
       return prev.filter((item) => item.id !== id);
     });
 
-    const { error } = await supabase.from("itens").delete().eq("id", id);
+    const { error } = await supabase.from("items").delete().eq("id", id);
 
     if (error) {
-      setItens((prev) => {
-        if (!itemRemovido) return prev;
-        const copia = [...prev];
-        copia.splice(indiceOriginal, 0, itemRemovido);
-        return copia;
+      setItems((prev) => {
+        if (!removedItem) return prev;
+        const copy = [...prev];
+        copy.splice(originalIndex, 0, removedItem);
+        return copy;
       });
       throw new Error(error.message);
     }
   }, []);
 
   return {
-    itens,
+    items,
     loading,
     error,
     addItem,
     updateItem,
     deleteItem,
-    updateQuantidade,
-    updatePrecisaComprar,
-    updateComprando,
-    finalizarCompra,
-    refetch: fetchItens,
+    updateQuantity,
+    updateNeedsPurchase,
+    updateIsPurchasing,
+    finishShopping,
+    refetch: fetchItems,
   };
 }

@@ -11,160 +11,152 @@ import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   const {
-    itens,
-    loading: carregandoItens,
-    error: erroItens,
+    items,
+    loading: itemsLoading,
+    error: itemsError,
     addItem,
     updateItem,
     deleteItem,
-    updateQuantidade,
-    updatePrecisaComprar,
-    updateComprando,
-    finalizarCompra,
+    updateQuantity,
+    updateNeedsPurchase,
+    updateIsPurchasing,
+    finishShopping,
   } = useItems();
   const {
-    categorias,
-    loading: carregandoCategorias,
-    error: erroCategorias,
-    addCategoria,
+    categories,
+    loading: categoriesLoading,
+    error: categoriesError,
+    addCategory,
   } = useCategories();
 
-  const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
-  const [ordenacao, setOrdenacao] = useState("nome-asc");
-  const [busca, setBusca] = useState("");
-  const [modalAberto, setModalAberto] = useState(false);
-  const [itemEmEdicao, setItemEmEdicao] = useState(null);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [sortOrder, setSortOrder] = useState("name-asc");
+  const [search, setSearch] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
   const [toast, setToast] = useState(null);
 
-  function mostrarToast(mensagem, tipo = "sucesso") {
-    setToast({ mensagem, tipo });
+  function showToast(message, type = "success") {
+    setToast({ message, type });
     setTimeout(() => setToast(null), 2600);
   }
 
-  const itensFiltrados = useMemo(() => {
-    let lista = itens;
-    if (categoriaAtiva === "Precisa comprar") {
-      lista = lista.filter((item) => item.precisa_comprar);
-    } else if (categoriaAtiva !== "Todos") {
-      lista = lista.filter((item) => item.categoria === categoriaAtiva);
+  const filteredItems = useMemo(() => {
+    let list = items;
+    if (activeCategory === "Needs to buy") {
+      list = list.filter((item) => item.needs_purchase);
+    } else if (activeCategory !== "All") {
+      list = list.filter((item) => item.category === activeCategory);
     }
 
-    const termo = busca.trim().toLowerCase();
-    if (termo) {
-      lista = lista.filter((item) => item.nome.toLowerCase().includes(termo));
+    const term = search.trim().toLowerCase();
+    if (term) {
+      list = list.filter((item) => item.name.toLowerCase().includes(term));
     }
 
-    const ordenada = [...lista];
-    switch (ordenacao) {
-      case "categoria-asc":
-        ordenada.sort((a, b) => {
-          const porCategoria = a.categoria.localeCompare(b.categoria, "pt-BR");
-          return porCategoria !== 0
-            ? porCategoria
-            : a.nome.localeCompare(b.nome, "pt-BR");
+    const sorted = [...list];
+    switch (sortOrder) {
+      case "category-asc":
+        sorted.sort((a, b) => {
+          const byCategory = a.category.localeCompare(b.category, "en");
+          return byCategory !== 0
+            ? byCategory
+            : a.name.localeCompare(b.name, "en");
         });
         break;
-      case "quantidade-desc":
-        ordenada.sort((a, b) => b.quantidade - a.quantidade);
+      case "quantity-desc":
+        sorted.sort((a, b) => b.quantity - a.quantity);
         break;
-      case "quantidade-asc":
-        ordenada.sort((a, b) => a.quantidade - b.quantidade);
+      case "quantity-asc":
+        sorted.sort((a, b) => a.quantity - b.quantity);
         break;
-      case "nome-asc":
+      case "name-asc":
       default:
-        ordenada.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+        sorted.sort((a, b) => a.name.localeCompare(b.name, "en"));
     }
-    return ordenada;
-  }, [itens, categoriaAtiva, busca, ordenacao]);
+    return sorted;
+  }, [items, activeCategory, search, sortOrder]);
 
-  async function handleAlterarQuantidade(id, novoValor) {
+  async function handleChangeQuantity(id, newValue) {
     try {
-      await updateQuantidade(id, novoValor);
+      await updateQuantity(id, newValue);
     } catch (err) {
-      mostrarToast(
-        err.message || "Não foi possível atualizar a quantidade.",
-        "erro",
+      showToast(
+        err.message || "Could not update the quantity.",
+        "error",
       );
     }
   }
 
-  async function handleAlterarComprar(id, novoValor) {
+  async function handleToggleNeedsPurchase(id, newValue) {
     try {
-      await updatePrecisaComprar(id, novoValor);
+      await updateNeedsPurchase(id, newValue);
     } catch (err) {
-      mostrarToast(err.message || "Não foi possível atualizar o item.", "erro");
+      showToast(err.message || "Could not update the item.", "error");
     }
   }
 
-  async function handleAlterarComprando(id, novoValor) {
+  async function handleToggleIsPurchasing(id, newValue) {
     try {
-      await updateComprando(id, novoValor);
+      await updateIsPurchasing(id, newValue);
     } catch (err) {
-      mostrarToast(err.message || "Não foi possível atualizar o item.", "erro");
+      showToast(err.message || "Could not update the item.", "error");
     }
   }
 
-  async function handleFinalizarCompra() {
+  async function handleFinishShopping() {
     try {
-      await finalizarCompra();
-      mostrarToast("Itens do carrinho marcados como comprados.");
+      await finishShopping();
+      showToast("Items in the cart marked as purchased.");
     } catch (err) {
-      mostrarToast(
-        err.message || "Não foi possível finalizar a compra.",
-        "erro",
+      showToast(
+        err.message || "Could not finish the shopping trip.",
+        "error",
       );
     }
   }
 
-  async function handleAddItem(novoItem) {
-    await addItem(novoItem);
-    mostrarToast(`"${novoItem.nome}" adicionado ao estoque.`);
+  async function handleAddItem(newItem) {
+    await addItem(newItem);
+    showToast(`"${newItem.name}" added to stock.`);
   }
 
-  async function handleSalvarEdicao(id, dadosAtualizados) {
-    await updateItem(id, dadosAtualizados);
-    mostrarToast(`"${dadosAtualizados.nome}" atualizado.`);
+  async function handleSaveEdit(id, updatedData) {
+    await updateItem(id, updatedData);
+    showToast(`"${updatedData.name}" updated.`);
   }
 
-  async function handleDeletarItem(id) {
-    const item = itens.find((i) => i.id === id);
+  async function handleDeleteItem(id) {
+    const item = items.find((i) => i.id === id);
     await deleteItem(id);
-    mostrarToast(`"${item?.nome ?? "Item"}" excluído do estoque.`);
+    showToast(`"${item?.name ?? "Item"}" removed from stock.`);
   }
 
-  async function handleAddCategoria(nome) {
-    const categoria = await addCategoria(nome);
-    mostrarToast(`Categoria "${categoria.nome}" criada.`);
-    return categoria;
+  async function handleAddCategory(name) {
+    const category = await addCategory(name);
+    showToast(`Category "${category.name}" created.`);
+    return category;
   }
 
-  const carregando = carregandoItens || carregandoCategorias;
-  const erro = erroItens || erroCategorias;
+  const loading = itemsLoading || categoriesLoading;
+  const error = itemsError || categoriesError;
 
   return (
     <div className="bg-paper min-h-screen">
       <Header
-        onNovoItem={() => setModalAberto(true)}
-        valorSearch={busca}
-        onChangeSearch={setBusca}
-        categorias={categorias}
-        categoriaAtiva={categoriaAtiva}
-        onSelecionarCategoria={setCategoriaAtiva}
-        valorOrdenacao={ordenacao}
-        onChangeOrdenacao={setOrdenacao}
+        onNewItem={() => setIsAddModalOpen(true)}
+        searchValue={search}
+        onChangeSearch={setSearch}
+        categories={categories}
+        activeCategory={activeCategory}
+        onSelectCategory={setActiveCategory}
+        sortValue={sortOrder}
+        onChangeSort={setSortOrder}
       />
       <Toast toast={toast} />
       <ScrollToTop />
       <main className="mx-auto max-w-7xl px-2 py-6 pb-18 sm:px-6 lg:px-8">
-        {/* <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <CategoryFilter
-            categorias={categorias}
-            categoriaAtiva={categoriaAtiva}
-            onSelecionar={setCategoriaAtiva}
-          />
-          <SortDropdown valor={ordenacao} onChange={setOrdenacao} />
-        </div> */}
-        {erro && (
+        {error && (
           <div className="border-brick/30 bg-brick/10 text-brick-dark mb-5 flex items-start gap-2 rounded-md border px-2 py-3 text-sm">
             <TriangleAlert
               size={17}
@@ -172,45 +164,45 @@ export default function App() {
               strokeWidth={2}
             />
             <span>
-              Erro ao conectar com o Supabase: {erro}. Verifique as variáveis de
-              ambiente e se as tabelas <code className="font-mono">itens</code>{" "}
-              e <code className="font-mono">categorias</code> existem.
+              Error connecting to Supabase: {error}. Check your environment
+              variables and make sure the <code className="font-mono">items</code>{" "}
+              and <code className="font-mono">categories</code> tables exist.
             </span>
           </div>
         )}
-        {carregando ? (
+        {loading ? (
           <div className="text-ink-faint flex flex-col items-center justify-center gap-3 py-24">
             <Loader2 size={26} className="animate-spin" strokeWidth={2} />
-            <p className="text-sm">Carregando itens…</p>
+            <p className="text-sm">Loading items…</p>
           </div>
         ) : (
           <ItemGrid
-            itens={itensFiltrados}
-            categoriaAtiva={categoriaAtiva}
-            onAlterarQuantidade={handleAlterarQuantidade}
-            onAlterarComprar={handleAlterarComprar}
-            onAlterarComprando={handleAlterarComprando}
-            onFinalizarCompra={handleFinalizarCompra}
-            onEditar={setItemEmEdicao}
+            items={filteredItems}
+            activeCategory={activeCategory}
+            onChangeQuantity={handleChangeQuantity}
+            onToggleNeedsPurchase={handleToggleNeedsPurchase}
+            onToggleIsPurchasing={handleToggleIsPurchasing}
+            onFinishShopping={handleFinishShopping}
+            onEdit={setEditingItem}
           />
         )}
       </main>
 
       <AddItemModal
-        aberto={modalAberto}
-        categorias={categorias}
-        onFechar={() => setModalAberto(false)}
+        open={isAddModalOpen}
+        categories={categories}
+        onClose={() => setIsAddModalOpen(false)}
         onAddItem={handleAddItem}
-        onAddCategoria={handleAddCategoria}
+        onAddCategory={handleAddCategory}
       />
 
       <EditItemModal
-        aberto={!!itemEmEdicao}
-        item={itemEmEdicao}
-        categorias={categorias}
-        onFechar={() => setItemEmEdicao(null)}
-        onSalvar={handleSalvarEdicao}
-        onDeletar={handleDeletarItem}
+        open={!!editingItem}
+        item={editingItem}
+        categories={categories}
+        onClose={() => setEditingItem(null)}
+        onSave={handleSaveEdit}
+        onDelete={handleDeleteItem}
       />
     </div>
   );
